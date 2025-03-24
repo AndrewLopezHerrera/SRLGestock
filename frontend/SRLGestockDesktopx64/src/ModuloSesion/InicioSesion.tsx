@@ -8,7 +8,7 @@ function InicioSesion(){
   const iniciarSesion = async (datos: { correoElectronico: string; contrasena: string }) => {
 
     try {
-      const response = await fetch("https://tubackend.com/api/login", {
+      /**const response = await fetch("https://tubackend.com/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -18,9 +18,9 @@ function InicioSesion(){
 
       if (!response.ok) {
         throw new Error("Error al iniciar sesión. El servidor no responde");
-      }
+      }*/
 
-      
+      navegador("/menuPrincipal");
     }
     catch (err) {
       if (typeof err === "object" && err !== null && "message" in err) {

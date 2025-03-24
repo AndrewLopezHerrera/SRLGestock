@@ -1,79 +1,96 @@
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Input, message } from "antd";
+import { Button } from "antd";
+import iconoUsuario from "../images/UsuarioIcono.png"
+import iconoEquipo from "../images/EquipoIcono.png"
+import iconoFactura from "../images/FacturaIcono.png"
+import iconoInventario from "../images/InventarioIcono.png"
+import iconoManana from "../images/iconoManana.png"
+import iconoTarde from "../images/iconoTarde.png"
+import iconoNoche from "../images/iconoNoche.png"
+import "./PantallaPrincpal.css"
 
-function ContrasenaOlvidada(){
+
+function MenuPrincipal(){
 
   const navegador = useNavigate();
 
-  const recuperarContrasena = async (datos: { correoElectronico: string}) => {
+  const rolUsuario : string = "Administrador";
 
-    try {
-      /**const response = await fetch("https://tubackend.com/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datos),
-      });
+  const nombreUsuario = "Usuario";
 
-      if (!response.ok) {
-        throw new Error("Error al iniciar sesión. El servidor no responde");
-      }*/
+  const verificarEsAdministrador = () => {
+    if (rolUsuario === "Administrador")
+      return true;
+    return false;
+  }
 
-      navegador("/");
+  const obtenerIconoDelDia = (): string => {
+    const hora: number = new Date().getHours();
+  
+    if (hora >= 5 && hora < 12) {
+      return iconoManana;
+    } else if (hora >= 12 && hora < 18) {
+      return iconoTarde;
+    } else {
+      return iconoNoche;
     }
-    catch (err) {
-      if (typeof err === "object" && err !== null && "message" in err) {
-        message.error(String((err as any).message));
-      } else {
-        message.error("Error desconocido.");
-      }
+  };
+
+  const obtenerMomentoDelDia = (): string => {
+    const hora: number = new Date().getHours();
+  
+    if (hora >= 5 && hora < 12) {
+      return "Buenos días " + nombreUsuario + ".";
+    } else if (hora >= 12 && hora < 18) {
+      return "Buenas tardes " + nombreUsuario + ".";
+    } else {
+      return "Buenas noches " + nombreUsuario + ".";
     }
-  }
-
-  const mostrarError = () => {
-    message.error("Por favor, revisa los campos antes de continuar");
-  }
-
-  const volverInicioSesion = () => {
-    navegador("/");
-  }
+  };
 
   return(
-    <div className="contenedorPrincipal">
-      <div className="bloqueFormularioInicioSesion">
-        <div className="tituloInicioSesion">
-          <b>Ingrese el correo electrónico del usuario a recuperar</b>
+    <div className="contenedorPrincipalMenuPrincipal">
+      <div className="contenedortituloMenuPrincipal">
+        <div className="contenedorSaludoImagenMenuPrincipal">
+          <div className="contenedorSaludoMenuPrincipal">
+            <h1 className="tituloSaludoMenuPrincipal">{obtenerMomentoDelDia()}</h1>
+          </div>
+          <img className="iconoDelDiaMenuPrincipal" src={obtenerIconoDelDia()} />
         </div>
-        <div className="contenedorFormularioInicioSesion">
-          <Form
-            name="loginForm"
-            onFinish={recuperarContrasena}
-            onFinishFailed={mostrarError}
-            className="formularioInicioSesion"
-          >
-            <Form.Item
-              label=""
-              name="correoElectronico"
-              rules={[{ required: true, message: "El correo electrónico es obligatorio", type: "email" }]}
-              className="itemForm"
-            >
-              <Input placeholder="Ingresa tu Correo Electrónico" className="entradasTextoInicioSesion" type="email"/>
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block>
-                <b>Enviarme nueva contrasena</b>
-              </Button>
-            </Form.Item>
-          </Form>
-          <Button className="botonContrasenaOlvidada" onClick={volverInicioSesion}>
-            <b>Volver</b>
+        <div className="tituloUbicacionMenuPrincipal">
+          Menú Principal
+        </div>
+      </div>
+      <div className="contenedorBotonesMenuPrincipal">
+        <div className="contenedorBotonMenuPrincipal">
+          <Button className="botonMenuPrincipal">
+            <img src={iconoFactura} className="imagenBotonMenuPrincipal"/>
+            <div className="textoBotonesMenuPrincipal">Facturación</div>
           </Button>
         </div>
+        <div className="contenedorBotonMenuPrincipal">
+          <Button className="botonMenuPrincipal">
+            <img src={iconoInventario} className="imagenBotonMenuPrincipal"/>
+            <div className="textoBotonesMenuPrincipal">Gestión de inventario</div>
+          </Button>
+        </div>
+        <div className="contenedorBotonMenuPrincipal">
+          <Button className="botonMenuPrincipal">
+            <img src={iconoUsuario} className="imagenBotonMenuPrincipal"/>
+            <div className="textoBotonesMenuPrincipal">Mi usuario</div>
+          </Button>
+        </div>
+        {verificarEsAdministrador() &&
+          <div className="contenedorBotonMenuPrincipal">
+            <Button className="botonMenuPrincipal">
+              <img src={iconoEquipo} className="imagenBotonMenuPrincipal"/>
+              <div className="textoBotonesMenuPrincipal">Usuarios de empleados</div>
+            </Button>
+          </div>
+        }
       </div>
     </div>
   );
 }
 
-export default ContrasenaOlvidada;
+export default MenuPrincipal;

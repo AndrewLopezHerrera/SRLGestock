@@ -1,0 +1,82 @@
+.contenedorPrincipalMenuPrincipal{
+  width: 100vw;
+  height: 100vh;
+  background-color: #16B2EC;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contenedortituloMenuPrincipal{
+  width: 87vw;
+  height: 40vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.contenedorSaludoImagenMenuPrincipal{
+  width: 50%;
+  height: 80%;
+  background-color: white;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.contenedorSaludoMenuPrincipal{
+  width: 65%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.tituloSaludoMenuPrincipal{
+  color: black;
+  font-size: xxx-large;
+}
+
+.iconoDelDiaMenuPrincipal{
+  height: 80%;
+  width: auto;
+}
+
+.tituloUbicacionMenuPrincipal{
+  color: white;
+  font-size: 6vw;
+}
+
+.contenedorBotonesMenuPrincipal{
+  width: 100vw;
+  height: 60vh;
+  display: flex;
+  overflow-x: auto;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.contenedorBotonMenuPrincipal{
+  width: 20vw;
+  height: 40vh;
+}
+
+.botonMenuPrincipal{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-color: transparent;
+}
+
+.imagenBotonMenuPrincipal{
+  width: 60%;
+  height: auto;
+}
+
+.textoBotonesMenuPrincipal{
+  font-size: auto;
+}
