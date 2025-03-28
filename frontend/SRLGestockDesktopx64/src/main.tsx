@@ -5,6 +5,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import InicioSesion from './ModuloSesion/InicioSesion';
 import ContrasenaOlvidada from './ModuloSesion/ContrasenaOlvidada';
 import MenuPrincipal from './ModuloGestionPrincipal/PantallaPrincipal';
+import Admistracion from './ModuloAdministracion/Administracion';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<InicioSesion />} />
         <Route path="/recuperarContrasena" element={<ContrasenaOlvidada />} />
         <Route path="/menuPrincipal" element={<MenuPrincipal />} />
+        <Route path="/administracion" element={<Admistracion />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

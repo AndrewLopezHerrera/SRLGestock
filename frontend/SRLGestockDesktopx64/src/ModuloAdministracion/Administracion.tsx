@@ -22,15 +22,20 @@ function Admistracion(){
 
   return(
     <div className="contenedorPrincipalAdministracion">
-      <div>
-        <Button onClick={irMenuPrincipal}>Volver</Button>
-        <h1>Administracion</h1>
-      </div>
-      <div>
-        <div>
-          <Button onClick={() => cambiarPantalla("CrearUsuario")}>Crear Usuarios</Button>
+      <div className="contenedorTituloBotonVolverAdministracion">
+        <div className="contenedorBotonVolverAdministracion">
+          <Button onClick={irMenuPrincipal} className="botonVolver">Volver</Button>
         </div>
-        <div>
+        <div className="contenedorTituloAdministracion">
+          <h1 className="tituloAdministracion">Administracion</h1>
+        </div>
+        <div className="contenedorBotonVolverAdministracion" />
+      </div>
+      <div className="contenedorAccionesAdministracion">
+        <div className="contenedorBotonesAccionesAdministracion">
+          <Button onClick={() => cambiarPantalla("CrearUsuario")} className="botonAccionAdministracion">Crear Usuarios</Button>
+        </div>
+        <div className="contenedorPantallaAccionAdministracion">
           {pantallaActual}
         </div>
       </div>

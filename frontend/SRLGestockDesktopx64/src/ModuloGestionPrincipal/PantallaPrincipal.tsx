@@ -48,6 +48,10 @@ function MenuPrincipal(){
     }
   };
 
+  const irUsuariosEmpleados = () => {
+    navegador("/administracion");
+  }
+
   return(
     <div className="contenedorPrincipalMenuPrincipal">
       <div className="contenedortituloMenuPrincipal">
@@ -82,7 +86,7 @@ function MenuPrincipal(){
         </div>
         {verificarEsAdministrador() &&
           <div className="contenedorBotonMenuPrincipal">
-            <Button className="botonMenuPrincipal">
+            <Button className="botonMenuPrincipal" onClick={irUsuariosEmpleados}>
               <img src={iconoEquipo} className="imagenBotonMenuPrincipal"/>
               <div className="textoBotonesMenuPrincipal">Usuarios de empleados</div>
             </Button>
