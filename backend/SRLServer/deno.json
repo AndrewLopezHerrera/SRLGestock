@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "dev": "deno run --watch main.ts"
+  },
+  "imports": {
+    "@std/assert": "jsr:@std/assert@1",
+    "postgres": "https://deno.land/x/postgres@v0.17.0/mod.ts",
+    "encriptadorContrasenas" : "https://deno.land/x/bcrypt@v0.3.0/mod.ts"
+  }
+}

@@ -165,6 +165,7 @@ BEGIN
 			distrito,
 			senas
 		);
+	RETURN 1;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -195,6 +196,12 @@ BEGIN
 		EMPEMPR
 	WHERE
 		correoElectronicoIngresado = correoElectronico;
+	UPDATE
+		Contrasena
+	SET
+		ContrasenaActual = contrasena
+	WHERE
+		IdUsuario = IdUsuarioSeleccionado;
 	RETURN 1;
 END;
 $$ LANGUAGE plpgsql;
@@ -230,6 +237,7 @@ BEGIN
 		Distrito = distrito,
 		Senas = senas
 	WHERE idUsuario = IdUsuario;
+	RETURN 1;
 END;
 $$ LANGUAGE plpgsql;
 
