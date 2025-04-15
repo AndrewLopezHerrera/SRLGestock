@@ -4,11 +4,6 @@ export default interface UsuarioSQL{
   nombre : string,
   apellidoPaterno : string,
   apellidoMaterno : string,
-  telefono : string,
   contrasenaActual : string,
-  nombreRol : string,
-  provincia : string,
-  canton : string,
-  distrito : string,
-  senas : string
+  nombreRol : string
 }

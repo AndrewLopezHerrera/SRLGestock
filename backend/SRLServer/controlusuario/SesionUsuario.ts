@@ -17,18 +17,17 @@ export default class SesionUsuario {
     this.Sesiones = sesiones;
   }
 
-  public IniciarSesion(contrasena: string): string {
+  public async IniciarSesion(contrasena: string): Promise<string> {
     if(this.IntentosInicioSesion == 5){
-      this.RestablecerIntentoInicioSesion();
       throw new Error("Cuenta bloqueada intente dentro de 15 minutos")
     }
-    this.UsuarioEnLinea.CompararContrasena(contrasena).then((estaCorrecto : boolean) => {
-      if(!estaCorrecto){
-        this.IntentosInicioSesion++;
-        throw new Error("Contraseña incorrecta. Vuelva a intentar")
-      }
-    })
-    this.ProgramarEliminacionSesion()
+    if(!await this.UsuarioEnLinea.CompararContrasena(contrasena)){
+      this.IntentosInicioSesion++;
+      if(this.IntentosInicioSesion == 5)
+        this.RestablecerIntentoInicioSesion();
+      throw new Error("Credenciales incorrectas.");
+    }
+    this.ProgramarEliminacionSesion();
     return this.IDSesion;
   }
 
@@ -48,7 +47,7 @@ export default class SesionUsuario {
       }
       else
         this.MinSesionActiva--;
-    }, 60000);
+    }, 28800000);
   }
 
   private RestablecerIntentoInicioSesion(): void {

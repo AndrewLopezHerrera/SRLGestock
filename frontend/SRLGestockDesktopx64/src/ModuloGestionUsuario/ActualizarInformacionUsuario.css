@@ -1,0 +1,84 @@
+:root{
+  overflow-x: hidden;
+}
+
+.contenedorMiUsuario{
+  width: 100vw;
+  height: auto;
+  background-color: #16B2EC;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contenedortituloMiUsuario{
+  height: 100%;
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenedorTituloBotonVolverMiUsuario{
+  width: 100vw;
+  height: 20vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.contenedorFormularios{
+  width: 100vw;
+}
+
+.contenedorBotonVolverMiUsuario{
+  height: 100%;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tituloMiUsuario{
+  font-size: 5vw;
+  color: white;
+}
+
+.contenedorFormularioActualizarUsuario{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.seccionFormularioActualizarUsuario{
+  width: 80%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: white;
+  border-radius: 30px;
+  padding-top: 5vh;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+}
+
+.tituloFormularioMiUsuario{
+  color: black;
+  font-size: xx-large;
+  margin-bottom: 3vh;
+}
+
+.botonCerrarSesion{
+  color: white;
+  background-color: red;
+  border-radius: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: xx-large;
+  margin-bottom: 4vh;
+  border: 30px solid red;
+}

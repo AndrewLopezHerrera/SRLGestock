@@ -18,32 +18,32 @@ export default class ConexionPostgreSQL extends ClientePostgreSQL {
   }
 
   public async CrearUsuario(datos: Map<string, string>): Promise<number> {
-    const resultado = await ClientePostgreSQL.ObtenerClienteSQL().queryObject<number>(
-      "SELECT * FROM CrearUsuario($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)",
+    const idRol : string | undefined = datos.get("idRol");
+    if(!idRol)
+      throw new Error("El ID del rol debe ser numérico");
+    const resultado = await ClientePostgreSQL.ObtenerClienteSQL().queryObject<{crearusuario: number}>(
+      "SELECT * FROM CrearUsuario($1,$2,$3,$4,$5,$6)",
       [datos.get("correoElectronico"),
       datos.get("nombre"),
       datos.get("apellidoPaterno"),
       datos.get("apellidoMaterno"),
-      datos.get("telefono"),
       datos.get("contrasenaActual"),
-      parseInt(String(datos.get("idRol"))),
-      datos.get("provincia"),
-      datos.get("canton"),
-      datos.get("distrito"),
-      datos.get("senas")]
+      parseInt(idRol)]
     );
-    return resultado.rows[0];
+    const numero : { crearusuario: number } = resultado.rows[0];
+    return numero?.crearusuario;
   }
 
   public async CambiarContrasena(correoElectronico: string, nuevaContrasena: string): Promise<number> {
-    const resultado = await ClientePostgreSQL.ObtenerClienteSQL().queryObject<number>(
+    const resultado = await ClientePostgreSQL.ObtenerClienteSQL().queryObject<{cambiarcontrasena: number }>(
       "SELECT * FROM CambiarContrasena($1,$2)",
       [correoElectronico,
       nuevaContrasena],
     );
     if(resultado.rows.length <= 0)
       throw new Error("No se ha podido cambiar la contrasena.")
-    return resultado.rows[0];
+    const numero : { cambiarcontrasena: number } = resultado.rows[0];
+    return numero?.cambiarcontrasena;
   }
 
   public async ActualizarDatos(datos: Map<string, string>) : Promise<number> {

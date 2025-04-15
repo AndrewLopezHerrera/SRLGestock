@@ -8,12 +8,7 @@ export default class Usuario {
   private ApellidoPaterno: string;
   private ApellidoMaterno: string;
   private Contrasena: string;
-  private Telefono: string;
   private Rol: string;
-  private Provincia : string;
-  private Canton : string;
-  private Distrito : string;
-  private Senas : string;
 
   constructor(
     ID: string, 
@@ -21,13 +16,9 @@ export default class Usuario {
     nombre: string, 
     apellidoPaterno: string, 
     apellidoMaterno: string, 
-    contrasena: string, 
-    telefono: string, 
-    rol: string,
-    provincia : string,
-    canton : string,
-    distrito : string,
-    senas : string) 
+    contrasena: string,
+    rol: string
+  ) 
   {
     this.IDUsuario = ID;
     this.CorreoElectrónico = correoElectronico;
@@ -35,12 +26,7 @@ export default class Usuario {
     this.ApellidoPaterno = apellidoPaterno;
     this.ApellidoMaterno = apellidoMaterno;
     this.Contrasena = contrasena;
-    this.Telefono = telefono;
     this.Rol = rol;
-    this.Provincia = provincia;
-    this.Canton = canton;
-    this.Distrito = distrito;
-    this.Senas = senas;
   }
 
   public async CompararContrasena(contrasenaIngresada: string) : Promise<boolean> {
@@ -55,30 +41,18 @@ export default class Usuario {
     informacionGeneral.set("nombre", this.Nombre);
     informacionGeneral.set("apellidoPaterno", this.ApellidoPaterno);
     informacionGeneral.set("apellidoMaterno", this.ApellidoMaterno);
-    informacionGeneral.set("telefono", this.Telefono);
-    informacionGeneral.set("contrasenaActual", this.Contrasena);
     informacionGeneral.set("nombreRol", this.Rol);
-    informacionGeneral.set("provincia", this.Provincia);
-    informacionGeneral.set("canton", this.Canton);
-    informacionGeneral.set("distrito", this.Distrito);
-    informacionGeneral.set("senas", this.Senas);
     return informacionGeneral;
   }
 
   public ActualizarInformación(correoElectronico: string, nombre: string, apellidoPaterno: string,
-    apellidoMaterno: string, telefono: string, rol: string, provincia : string, canton : string,
-    distrito : string, senas : string) : void
+    apellidoMaterno: string, rol: string) : void
   {
     this.CorreoElectrónico = correoElectronico;
     this.Nombre = nombre;
     this.ApellidoPaterno = apellidoPaterno;
     this.ApellidoMaterno = apellidoMaterno;
-    this.Telefono = telefono;
     this.Rol = rol;
-    this.Provincia = provincia;
-    this.Canton = canton;
-    this.Distrito = distrito;
-    this.Senas = senas;
   }
 
   public ObtenerCorreoElectronico(){

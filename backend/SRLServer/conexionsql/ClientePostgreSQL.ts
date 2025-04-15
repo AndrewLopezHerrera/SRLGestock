@@ -16,6 +16,7 @@ export default class ClientePostgreSQL {
       port: 5432
     });
     this.ConexionPostgreSQL.connect();
+    console.log("Bases de datos conectadas.");
   }
 };
 

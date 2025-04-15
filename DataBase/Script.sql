@@ -42,6 +42,7 @@ INSERT INTO Rol(NombreRol) VALUES ('Administrador');
 INSERT INTO Rol(NombreRol) VALUES ('Vendedor');
 
 --Vistas de los datos
+
 CREATE OR REPLACE VIEW EMPEMPR AS --Vista de empleados
 	SELECT 
 		Usuario.IdUsuario AS idUsuario,
@@ -49,12 +50,8 @@ CREATE OR REPLACE VIEW EMPEMPR AS --Vista de empleados
 		Nombre AS nombre,
 		ApellidoPaterno AS apellidoPaterno,
 		ApellidoMaterno AS apellidoMaterno,
-		Telefono AS telefono,
 		ContrasenaActual AS contrasenaActual,
-		NombreRol AS nombreRol,
-		Provincia AS provincia,
-		Canton AS canton,
-		Senas AS senas
+		NombreRol AS nombreRol
 	FROM
 		Usuario
 	INNER JOIN
@@ -68,47 +65,43 @@ CREATE OR REPLACE VIEW EMPEMPR AS --Vista de empleados
 	INNER JOIN
 		Rol
 	ON
-		RolUsuario.IdUsuario = Rol.IdRol
-	INNER JOIN
-		Direccion
-	ON
-		Direccion.IdUsuario = Usuario.IdUsuario;
+		RolUsuario.IdRol = Rol.IdRol;
 
 --Procedimientos almacenados
 
 CREATE OR REPLACE FUNCTION BuscarEmpleado(correoElectronicoIngresado VARCHAR(50))
 RETURNS TABLE (
-	idUsuario INT,
-	correoElectronico VARCHAR,
-	nombre VARCHAR,
-	apellidoPaterno VARCHAR,
-	apellidoMaterno VARCHAR,
-	telefono VARCHAR,
-	contrasenaActual VARCHAR,
-	nombreRol VARCHAR,
-	provincia VARCHAR,
-	canton VARCHAR,
-	distrito VARCHAR,
-	senas VARCHAR
+	"idUsuario" INT,
+	"correoElectronico" VARCHAR,
+	"nombre" VARCHAR,
+	"apellidoPaterno" VARCHAR,
+	"apellidoMaterno" VARCHAR,
+	"contrasenaActual" VARCHAR,
+	"nombreRol" VARCHAR
 )
 AS $$
 BEGIN
-    RETURN QUERY SELECT * FROM EMPEMPR WHERE correoElectronico = correoElectronicoIngresado;
+    RETURN QUERY
+    SELECT
+        e.idUsuario,
+        e.correoElectronico,
+        e.nombre,
+        e.apellidoPaterno,
+        e.apellidoMaterno,
+        e.contrasenaActual,
+        e.nombreRol
+    FROM EMPEMPR e
+    WHERE e.correoElectronico = correoElectronicoIngresado;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION CrearUsuario(
 	correoElectronico VARCHAR(50),
 	nombre VARCHAR(50),
 	apellidoPaterno VARCHAR(50),
 	apellidoMaterno VARCHAR(50),
-	telefono VARCHAR(50),
 	contrasenaActual VARCHAR(60),
-	idRol INT,
-	provincia VARCHAR(50),
-	canton VARCHAR(50),
-	distrito VARCHAR(50),
-	senas VARCHAR(50)
+	idRol INT
 )
 RETURNS INT AS $$
 DECLARE
@@ -119,16 +112,14 @@ BEGIN
 			CorreoElectronico,
 			Nombre,
 			ApellidoPaterno,
-			ApellidoMaterno,
-			Telefono
+			ApellidoMaterno
 		)
 	VALUES
 		(
 			correoElectronico,
 			nombre,
 			apellidoPaterno,
-			apellidoMaterno,
-			telefono
+			apellidoMaterno
 		)
 	RETURNING IdUsuario INTO nuevoIDUsuario;
 	INSERT INTO
@@ -151,23 +142,9 @@ BEGIN
 			nuevoIDUsuario,
 			idRol
 		);
-	INSERT INTO
-		Direccion(
-			Provincia,
-			Canton,
-			Distrito,
-			Senas
-		)
-	VALUES
-		(
-			provincia,
-			canton,
-			distrito,
-			senas
-		);
-	RETURN 1;
+	RETURN nuevoIDUsuario;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION TraerRolesActuales()
 RETURNS TABLE (
@@ -178,33 +155,32 @@ AS $$
 BEGIN
     RETURN QUERY SELECT * FROM Rol;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION CambiarContrasena(
-	correoElectronicoIngresado VARCHAR,
-	contrasena VARCHAR
+    correoElectronicoIngresado VARCHAR,
+    contrasena VARCHAR
 )
 RETURNS INT AS $$
 DECLARE
-	IdUsuarioSeleccionado INT;
+    IdUsuarioSeleccionado INT;
 BEGIN
-    SELECT
-		idUsuario
-	INTO
-		IdUsuarioSeleccionado
-	FROM
-		EMPEMPR
-	WHERE
-		correoElectronicoIngresado = correoElectronico;
-	UPDATE
-		Contrasena
-	SET
-		ContrasenaActual = contrasena
-	WHERE
-		IdUsuario = IdUsuarioSeleccionado;
-	RETURN 1;
+    SELECT idUsuario
+    INTO IdUsuarioSeleccionado
+    FROM EMPEMPR
+    WHERE correoElectronico = correoElectronicoIngresado;
+
+    IF IdUsuarioSeleccionado IS NULL THEN
+        RETURN 0;
+    END IF;
+
+    UPDATE Contrasena
+    SET ContrasenaActual = CambiarContrasena.contrasena
+    WHERE IdUsuario = IdUsuarioSeleccionado;
+
+    RETURN 1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION ActualizarDatos(
 	idUsuario INT,
@@ -239,14 +215,17 @@ BEGIN
 	WHERE idUsuario = IdUsuario;
 	RETURN 1;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 --Usuario que utiliza el backend para conectarse.
 CREATE USER backend WITH PASSWORD 'askjfnsodpme';
 GRANT EXECUTE ON FUNCTION BuscarEmpleado(VARCHAR(50)) TO backend;
 GRANT EXECUTE ON FUNCTION CrearUsuario(VARCHAR(50),VARCHAR(50),VARCHAR(50),VARCHAR(50),
-	VARCHAR(50),VARCHAR(60),INT,VARCHAR(50),VARCHAR(50),VARCHAR(50),VARCHAR(50)) TO backend;
+	VARCHAR(50), INT) TO backend;
 GRANT EXECUTE ON FUNCTION CambiarContrasena(VARCHAR,VARCHAR) TO backend;
 GRANT EXECUTE ON FUNCTION ActualizarDatos(INT,VARCHAR(50),VARCHAR(50),VARCHAR(50),VARCHAR(50),
 	VARCHAR(50),VARCHAR(50),VARCHAR(50),VARCHAR(50),VARCHAR(50)) TO backend;
 GRANT EXECUTE ON FUNCTION TraerRolesActuales() TO backend;
+
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+REVOKE ALL ON TABLES FROM usuario_backend;

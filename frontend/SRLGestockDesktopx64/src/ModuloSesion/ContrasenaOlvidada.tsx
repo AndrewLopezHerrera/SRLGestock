@@ -1,15 +1,21 @@
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Input, message } from "antd";
+import { Form, Button, Input, Modal } from "antd";
 import "./InicioSesion.css"
+import InfoSesion from "./Sesion";
+import { useState } from "react";
 
 function ContrasenaOlvidada(){
+
+  const [esVisible, setEsVisible] = useState<boolean>(false);
+  const [tituloModal, setTituloModal] = useState<string>("");
+  const [cuerpoModal, setCuerpoModal] = useState<string>(""); 
 
   const navegador = useNavigate();
 
   const recuperarContrasena = async (datos: { correoElectronico: string}) => {
 
     try {
-      /**const response = await fetch("https://tubackend.com/api/login", {
+      const response = await fetch(InfoSesion.ObtenerIPBackend() + "/RecuperarContrasena", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -18,22 +24,27 @@ function ContrasenaOlvidada(){
       });
 
       if (!response.ok) {
-        throw new Error("Error al iniciar sesión. El servidor no responde");
-      }*/
+        const { error } = await response.json();
+        throw new Error(error);
+      }
 
       navegador("/");
     }
     catch (err) {
+      setTituloModal("Error al recuperar contraseña");
       if (typeof err === "object" && err !== null && "message" in err) {
-        message.error(String((err as any).message));
+        setCuerpoModal(String((err as any).message));
       } else {
-        message.error("Error desconocido.");
+        setCuerpoModal("Error desconocido.");
       }
+      setEsVisible(true);
     }
   }
 
   const mostrarError = () => {
-    message.error("Por favor, revisa los campos antes de continuar");
+    setTituloModal("Error al recuperar contraseña");
+    setCuerpoModal("Por favor, revisa los campos antes de continuar");
+    setEsVisible(true);
   }
 
   const volverInicioSesion = () => {
@@ -48,7 +59,7 @@ function ContrasenaOlvidada(){
         </div>
         <div className="contenedorFormularioInicioSesion">
           <Form
-            name="loginForm"
+            name="recuperarContrasenaFormulario"
             onFinish={recuperarContrasena}
             onFinishFailed={mostrarError}
             className="formularioInicioSesion"
@@ -71,6 +82,16 @@ function ContrasenaOlvidada(){
           <Button className="botonContrasenaOlvidada" onClick={volverInicioSesion}>
             <b>Volver</b>
           </Button>
+          <div>
+            <Modal
+              title={tituloModal}
+              open={esVisible}
+              onOk={() => setEsVisible(false)}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <p>{cuerpoModal}</p>
+            </Modal>
+          </div>
         </div>
       </div>
     </div>

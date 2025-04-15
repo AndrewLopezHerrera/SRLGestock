@@ -1,14 +1,25 @@
-import { useNavigate } from "react-router-dom";
-import { Form, Button, Input, message } from "antd";
+import { Form, Button, Input, Select, Modal } from "antd";
 import "./CrearUsuarios.css"
+import InfoSesion from "../ModuloSesion/Sesion";
+import { useState } from "react";
+
+const { Option } = Select;
 
 function CreacionUsuario(){
-  const navegador = useNavigate();
+  const [esVisible, setEsVisible] = useState<boolean>(false);
+  const [tituloModal, setTituloModal] = useState<string>("");
+  const [cuerpoModal, setCuerpoModal] = useState<string>("");
 
-  const iniciarSesion = async (datos: { correoElectronico: string; contrasena: string }) => {
-
+  const crearUsuario = async (
+      datos: {correoElectronico: string, 
+      nombre: string,
+      apellidoPaterno: string,
+      apellidoMaterno: string,
+      idSesion: string
+    }) => {
+    datos.idSesion = InfoSesion.ObtenerIdSesion();
     try {
-      /**const response = await fetch("https://tubackend.com/api/login", {
+      const response = await fetch(InfoSesion.ObtenerIPBackend() + "/CrearUsuario", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -17,26 +28,32 @@ function CreacionUsuario(){
       });
 
       if (!response.ok) {
-        throw new Error("Error al iniciar sesión. El servidor no responde");
-      }*/
+        const { error } = await response.json();
+        throw new Error(error);
+      }
 
-      navegador("/menuPrincipal");
+      const { idUsuario } = await response.json();
+
+      setTituloModal("Usuario creado");
+      setCuerpoModal("El ID del nuevo usuario es: " + String(idUsuario));
+      setEsVisible(true);
+
     }
     catch (err) {
+      setTituloModal("Error al crear el nuevo usuario");
       if (typeof err === "object" && err !== null && "message" in err) {
-        message.error(String((err as any).message));
-      } else {
-        message.error("Error desconocido.");
+        setCuerpoModal(String((err as any).message));
       }
+      else {
+        setCuerpoModal("Error desconocido");
+      }
+      setEsVisible(true);
     }
   }
 
   const mostrarError = () => {
-    message.error("Por favor, revisa los campos antes de continuar");
-  }
-
-  const irRecuperarContrasena = () => {
-    navegador("/recuperarContrasena");
+    setCuerpoModal("Por favor, revisa los campos antes de continuar");
+    setEsVisible(true);
   }
 
   return(
@@ -46,15 +63,15 @@ function CreacionUsuario(){
       </div>
       <div className="contenedorFormularioCrearUsuario">
         <Form
-          name="loginForm"
-          onFinish={iniciarSesion}
+          name="crearUsuarioFormulario"
+          onFinish={crearUsuario}
           onFinishFailed={mostrarError}
           className="formularioInicioSesion"
         >
 
           <Form.Item
             label="Primer Nombre: "
-            name="primerNombre"
+            name="nombre"
             rules={[{ required: true, message: "El primer nombre es obligatorio"}]}
             className="itemForm"
           >
@@ -63,7 +80,7 @@ function CreacionUsuario(){
 
           <Form.Item
             label="Primer Apellido: "
-            name="primerApellido"
+            name="apellidoPaterno"
             rules={[{ required: true, message: "El primer apellido es obligatorio"}]}
             className="itemForm"
           >
@@ -72,7 +89,7 @@ function CreacionUsuario(){
 
           <Form.Item
             label="Segundo Apellido: "
-            name="segundoApellido"
+            name="apellidoMaterno"
             rules={[{ required: true, message: "El segundo apellido es obligatorio"}]}
             className="itemForm"
           >
@@ -85,43 +102,19 @@ function CreacionUsuario(){
             rules={[{ required: true, message: "El correo electrónico es obligatorio", type: "email"}]}
             className="itemForm"
           >
-            <Input placeholder="Ejemplo: juanperez@mail.com" className="entradasTextoInicioSesion" />
+            <Input placeholder="Ejemplo: juanperez@mail.com" className="entradasTextoInicioSesion" type="email"/>
           </Form.Item>
 
           <Form.Item
-            label="Provincia: "
-            name="provincia"
-            rules={[{ required: true, message: "El telefono es obligatorio", type: "number"}]}
+            label="Selecciona una opción"
+            name="idRol"
+            rules={[{ required: true, message: "Esta opción es obligatoria" }]}
             className="itemForm"
           >
-            <Input placeholder="Ejemplo: San José" className="entradasTextoInicioSesion" />
-          </Form.Item>
-
-          <Form.Item
-            label="Cantón"
-            name="canton: "
-            rules={[{ required: true, message: "El telefono es obligatorio", type: "number"}]}
-            className="itemForm"
-          >
-            <Input placeholder="Ejemplo: Escazú" className="entradasTextoInicioSesion" />
-          </Form.Item>
-
-          <Form.Item
-            label="Distrito: "
-            name="distrito"
-            rules={[{ required: true, message: "El telefono es obligatorio", type: "number"}]}
-            className="itemForm"
-          >
-            <Input placeholder="Ejemplo: San Rafael" className="entradasTextoInicioSesion" />
-          </Form.Item>
-
-          <Form.Item
-            label="Señas exactas: "
-            name="senasExactas"
-            rules={[{ required: true, message: "El telefono es obligatorio", type: "number"}]}
-            className="itemForm"
-          >
-            <Input placeholder="Ejemplo: 150m este de la iglesia" className="entradasTextoInicioSesion" />
+            <Select placeholder="Selecciona el tipo de empleado" className="entradasTextoInicioSesion">
+              <Option value="1" className="entradasTextoInicioSesion">Administrador</Option>
+              <Option value="2" className="entradasTextoInicioSesion">Empleado</Option>
+            </Select>
           </Form.Item>
 
           <Form.Item>
@@ -130,6 +123,16 @@ function CreacionUsuario(){
             </Button>
           </Form.Item>
         </Form>
+        <div>
+          <Modal
+            title={tituloModal}
+            open={esVisible}
+            onOk={() => setEsVisible(false)}
+            cancelButtonProps={{ style: { display: "none" } }}
+          >
+            <p>{cuerpoModal}</p>
+          </Modal>
+        </div>
       </div>
     </div>
   );

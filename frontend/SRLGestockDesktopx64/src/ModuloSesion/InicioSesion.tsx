@@ -1,14 +1,19 @@
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Input, message } from "antd";
+import { Form, Button, Input, Modal } from "antd";
 import "./InicioSesion.css"
+import InfoSesion from "./Sesion";
+import { useState } from "react";
 
 function InicioSesion(){
+  const [error, setError] = useState<boolean>(false);
+  const [tituloError, setTituloError] = useState<string>("");
+  const [cuerpoError, setCuerpoError] = useState<string>(""); 
+
   const navegador = useNavigate();
 
   const iniciarSesion = async (datos: { correoElectronico: string; contrasena: string }) => {
-
     try {
-      /**const response = await fetch("https://tubackend.com/api/login", {
+      const respuestaInicioSesion = await fetch(InfoSesion.ObtenerIPBackend() + "/IniciarSesion", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -16,23 +21,48 @@ function InicioSesion(){
         body: JSON.stringify(datos),
       });
 
-      if (!response.ok) {
-        throw new Error("Error al iniciar sesión. El servidor no responde");
-      }*/
+      if (!respuestaInicioSesion.ok) {
+        const { error } = await respuestaInicioSesion.json();
+        throw new Error(error);
+      }
+
+      const { idSesion } = await respuestaInicioSesion.json();
+
+      const respuestaInformacion = await fetch(InfoSesion.ObtenerIPBackend() + "/RecuperarInformacionGeneralUsuario", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({idSesion}),
+      });
+
+      if (!respuestaInformacion.ok) {
+        const { error } = await respuestaInformacion.json();
+        throw new Error(error);
+      }
+
+      const { nombre, apellidoPaterno, nombreRol } = await respuestaInformacion.json();
+
+      InfoSesion.IniciarSesion(idSesion, nombre, apellidoPaterno, nombreRol);
 
       navegador("/menuPrincipal");
     }
     catch (err) {
       if (typeof err === "object" && err !== null && "message" in err) {
-        message.error(String((err as any).message));
+        setTituloError("Error al iniciar sesión");
+        setCuerpoError(String((err as any).message));
       } else {
-        message.error("Error desconocido.");
+        setTituloError("Error al iniciar sesión");
+        setCuerpoError("Error desconocido");
       }
+      setError(true);
     }
   }
 
   const mostrarError = () => {
-    message.error("Por favor, revisa los campos antes de continuar");
+    setTituloError("Error al iniciar sesión");
+    setCuerpoError("Por favor, revisa los campos antes de continuar");
+    setError(true);
   }
 
   const irRecuperarContrasena = () => {
@@ -79,6 +109,16 @@ function InicioSesion(){
           <Button className="botonContrasenaOlvidada" onClick={irRecuperarContrasena}>
             <b>He olvidado la contraseña</b>
           </Button>
+          <div>
+            <Modal
+              title={tituloError}
+              open={error}
+              onOk={() => setError(false)}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <p>{cuerpoError}</p>
+            </Modal>
+          </div>
         </div>
       </div>
     </div>

@@ -8,15 +8,16 @@ import iconoManana from "../images/iconoManana.png"
 import iconoTarde from "../images/iconoTarde.png"
 import iconoNoche from "../images/iconoNoche.png"
 import "./PantallaPrincpal.css"
+import InfoSesion from "../ModuloSesion/Sesion";
 
 
 function MenuPrincipal(){
 
   const navegador = useNavigate();
 
-  const rolUsuario : string = "Administrador";
+  const rolUsuario : string = InfoSesion.ObtenerRolUsuario();
 
-  const nombreUsuario = "Usuario";
+  const nombreUsuario = InfoSesion.ObtenerNombreUsuario();
 
   const verificarEsAdministrador = () => {
     if (rolUsuario === "Administrador")
@@ -52,6 +53,10 @@ function MenuPrincipal(){
     navegador("/administracion");
   }
 
+  const irMiUsuario = () => {
+    navegador("/actualizarInformacionUsuario");
+  }
+
   return(
     <div className="contenedorPrincipalMenuPrincipal">
       <div className="contenedortituloMenuPrincipal">
@@ -79,7 +84,7 @@ function MenuPrincipal(){
           </Button>
         </div>
         <div className="contenedorBotonMenuPrincipal">
-          <Button className="botonMenuPrincipal">
+          <Button className="botonMenuPrincipal" onClick={irMiUsuario}>
             <img src={iconoUsuario} className="imagenBotonMenuPrincipal"/>
             <div className="textoBotonesMenuPrincipal">Mi usuario</div>
           </Button>

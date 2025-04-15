@@ -3,7 +3,8 @@ import ConexionPostgreSQL from "../conexionsql/ConexionSQLUsuario.ts";
 import SesionUsuario from "./SesionUsuario.ts";
 import UsuarioSQL from "../conexionsql/UsuarioSQLInterface.ts";
 import { hash , genSalt} from "encriptadorContrasenas";
-import { SmtpClient } from "https://deno.land/x/smtp@v0.7.0/mod.ts";
+import RolUsuarioSQL from "../conexionsql/RolUsuarioSQLInterface.ts";
+import CorreoElectronico from "../gestorcorreoselectronicos/CorreoElectronico.ts";
 
 export default class GestorSesionUsuario {
   private ConexionSQL : ConexionPostgreSQL;
@@ -16,24 +17,37 @@ export default class GestorSesionUsuario {
     this.IniciosDeSesion = new Map();
   }
 
-  public IniciarSesion(correoElectronico: string, contrasena: string) : string {
+  public async IniciarSesion(correoElectronico: string, contrasena: string) : Promise<string> {
     let idSesion : string = "";
-    if(this.IniciosDeSesion.has(correoElectronico)){
-      const sesionUsuario = this.IniciosDeSesion.get(correoElectronico);
-      if(sesionUsuario?.IniciarSesion(contrasena)){
-        idSesion = sesionUsuario.ObtenerIDSesion();
-      }
-      else
-        throw new Error("Credenciales incorrectas");
-    }
+    if(!this.IniciosDeSesion.has(correoElectronico))
+      await this.CrearSesionUsuario(correoElectronico);
+    const sesion = this.IniciosDeSesion.get(correoElectronico);
+    if(!sesion)
+      throw Error("No existe la sesión de usuario");
+    idSesion = await sesion?.IniciarSesion(contrasena);
+    this.IniciosDeSesion.delete(correoElectronico);
+    this.SesionesDeUsuario.set(idSesion, sesion);
     return idSesion;
   };
 
-  public CrearUsuario(datos: Map<string, string>) : string{
-    let idUsuario : string = "";
-    this.ConexionSQL.CrearUsuario(datos).then((idUsuarioNuevo : number) => {
-      idUsuario = String(idUsuarioNuevo);
-    })
+  private async CrearSesionUsuario(correoElectronico : string) : Promise<void> {
+      const usuario : UsuarioSQL = await this.ConexionSQL.BuscarUsuario(correoElectronico);
+      const usuarioSesion : Usuario = new Usuario(String(usuario.idUsuario), usuario.correoElectronico,
+        usuario.nombre, usuario.apellidoPaterno, usuario.apellidoMaterno, usuario.contrasenaActual,
+        usuario.nombreRol);
+      const sesion : SesionUsuario = new SesionUsuario(usuarioSesion, this.SesionesDeUsuario);
+      this.IniciosDeSesion.set(correoElectronico, sesion);
+  }
+
+  public async CrearUsuario(datos: Map<string, string>) : Promise<string>{
+    const usuarioCreador = this.SesionesDeUsuario.get(String(datos.get("idSesion")));
+    if(!usuarioCreador)
+      throw new Error("La sesión de usuario no existe o ha expirado.")
+    if(!(usuarioCreador.ObtenerUsuario().RecuperarInformaciónGeneral().get("nombreRol") == "Administrador"))
+      throw new Error("Usted no es un administrador, no puede crear usuarios");
+    datos.set("contrasenaActual", "jksdjflsdlf")
+    const idUsuario = String(await this.ConexionSQL.CrearUsuario(datos));
+    await this.RecuperarContrasena(String(datos.get("correoElectronico")));
     return idUsuario;
   }
 
@@ -56,7 +70,9 @@ export default class GestorSesionUsuario {
     const nuevaContrasenaCifrada = await hash(nuevaContrasena, sal);
     if(await this.ConexionSQL.CambiarContrasena(usuario.correoElectronico, nuevaContrasenaCifrada) !== 1)
       throw new Error("No se pudo cambiar la nueva contraseña.");
-    this.EnviarCorreoElectronico(usuario.correoElectronico, nuevaContrasena);
+    this.SesionesDeUsuario.delete(correoElectronico);
+    CorreoElectronico.EnviarCorreoElectronico(correoElectronico, "Cambio contraseña",
+      "Esta es la nueva contraseña: " + nuevaContrasena, "Recuperación Contraseña");
   }
   
   public RecuperarInformaciónGeneral(idSesion: string): Map<string, string> {
@@ -65,6 +81,10 @@ export default class GestorSesionUsuario {
       throw new Error("No existe la sesión de usuario.");
     const usuario : Usuario = sesion.ObtenerUsuario();
     return usuario.RecuperarInformaciónGeneral();
+  }
+
+  public async TraerUsuariosRoles() : Promise<RolUsuarioSQL[]> {
+    return await this.ConexionSQL.TraerRoles();
   }
 
   public async CambiarContrasena(idSesion: string, contrasenaActual: string, contrasenaNueva: string): Promise<boolean> {
@@ -82,22 +102,4 @@ export default class GestorSesionUsuario {
     return true;
   }
 
-  private async EnviarCorreoElectronico(correoDestino: string, contraseñaAleatoria: string): Promise<void> {
-    const client = new SmtpClient();
-    await client.connect({
-      hostname: "sandbox.smtp.mailtrap.io",
-      port: 587,
-      username: "11a7a990a23c30",
-      password: "2722419826f3f3",
-    });
-
-    await client.send({
-      from: "recuperacion@srltechnology.com",
-      to: correoDestino,
-      subject: "Recuperación de contraseña SRL Technology",
-      content: "Hola. Su nueva contraseña es " + contraseñaAleatoria,
-    });
-
-    await client.close();
-  }
 }
