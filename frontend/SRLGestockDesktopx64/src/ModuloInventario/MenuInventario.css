@@ -1,0 +1,79 @@
+.contenedorMenuInventario{
+    width: 100vw;
+    height: 100vh;
+    background-color: #16B2EC;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contenedortituloMenuInventario{
+    width: 87vw;
+    height: 40vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contenedorTituloBotonVolverMenuInventario{
+    width: 100vw;
+    height: 20vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.tituloMenuInventario{
+    font-size: 5vw;
+    color: white;
+}
+
+.contenedortituloMenuInventario{
+    height: 100%;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contenedorBotonVolverMenuInventario{
+    height: 100%;
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.imagenBotonMenuInventario{
+    width: 60%;
+    height: auto;
+}
+
+.contenedorBotonesMenuInventario{
+    width: 100vw;
+    height: 80vh;
+    display: flex;
+    overflow-x: auto;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: row;
+}
+
+.botonMenuInventario{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-color: transparent;
+}
+
+.textoBotonesMenuInventario{
+    font-size: x-large;
+    max-width: 100%;
+}
+
+.contenedorBotonMenuInventario{
+    width: 30vw;
+    height: 60vh;
+  }

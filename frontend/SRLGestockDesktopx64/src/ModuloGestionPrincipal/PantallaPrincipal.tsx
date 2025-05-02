@@ -56,6 +56,10 @@ function MenuPrincipal(){
   const irMiUsuario = () => {
     navegador("/actualizarInformacionUsuario");
   }
+  
+  const irMenuInventario = () => {
+    navegador("/menuInventario");
+  }
 
   return(
     <div className="contenedorPrincipalMenuPrincipal">
@@ -79,7 +83,7 @@ function MenuPrincipal(){
         </div>
         <div className="contenedorBotonMenuPrincipal">
           <Button className="botonMenuPrincipal">
-            <img src={iconoInventario} className="imagenBotonMenuPrincipal"/>
+            <img src={iconoInventario} className="imagenBotonMenuPrincipal" onClick={irMenuInventario}/>
             <div className="textoBotonesMenuPrincipal">Gestión de inventario</div>
           </Button>
         </div>

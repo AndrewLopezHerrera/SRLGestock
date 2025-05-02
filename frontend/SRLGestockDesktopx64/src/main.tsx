@@ -7,6 +7,8 @@ import ContrasenaOlvidada from './ModuloSesion/ContrasenaOlvidada';
 import MenuPrincipal from './ModuloGestionPrincipal/PantallaPrincipal';
 import Admistracion from './ModuloAdministracion/Administracion';
 import ActualizacionInformacionUsuario from './ModuloGestionUsuario/ActualizarInformacionUsuario';
+import MenuInventario from './ModuloInventario/MenuInventario';
+import CrearProducto from './ModuloInventario/CrearProducto';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,6 +19,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/menuPrincipal" element={<MenuPrincipal />} />
         <Route path="/administracion" element={<Admistracion />} />
         <Route path="/actualizarInformacionUsuario" element={<ActualizacionInformacionUsuario />} />
+        <Route path="/menuInventario" element={<MenuInventario />} />
+        <Route path="/crearProducto" element={<CrearProducto />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
