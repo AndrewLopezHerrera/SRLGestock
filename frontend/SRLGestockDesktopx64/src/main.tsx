@@ -9,6 +9,8 @@ import Admistracion from './ModuloAdministracion/Administracion';
 import ActualizacionInformacionUsuario from './ModuloGestionUsuario/ActualizarInformacionUsuario';
 import MenuInventario from './ModuloInventario/MenuInventario';
 import CrearProducto from './ModuloInventario/CrearProducto';
+import SeleccionarProducto from './ModuloInventario/SeleccionarProducto';
+import EditarProducto from './ModuloInventario/EditarProducto';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,6 +23,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/actualizarInformacionUsuario" element={<ActualizacionInformacionUsuario />} />
         <Route path="/menuInventario" element={<MenuInventario />} />
         <Route path="/crearProducto" element={<CrearProducto />} />
+        <Route path="/seleccionarProducto" element={<SeleccionarProducto />} />
+        <Route path="/editarProducto/:id" element={<EditarProducto />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

@@ -1,13 +1,70 @@
+.contenedorCrearProducto{
+  width: 100vw;
+  height: 100vh;
+  background-color: #16B2EC;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contenedorTituloBotonVolverCrearProducto{
+  width: 100vw;
+  height: 20vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tituloCrearProducto{
+  font-size: 5vw;
+  color: white;
+}
+
+.contenedortituloCrearProducto{
+  height: 100%;
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenedorBotonVolverCrearProducto{
+  height: 100%;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.formularioCrearProducto{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .seccionFormularioCrearProducto{
-    width: 80%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-around;
-    background-color: white;
-    border-radius: 30px;
-    padding-top: 5vh;
-    margin-top: 3vh;
-    margin-bottom: 3vh;
-  }
+  width: 80%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: white;
+  border-radius: 30px;
+  padding-top: 5vh;
+  margin-top: 3vh;
+  margin-bottom: 3vh;
+}
+
+.contenedorFormularioCrearProducto{
+  width: 100vw;
+  height: 80vh;
+  display: flex;
+  overflow-x: auto;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+}

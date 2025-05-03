@@ -11,8 +11,8 @@ function MenuInventario(){
     navegador("/crearProducto");
   };
 
-  const irBuscarModificarEliminarProducto = () => {
-    navegador("/menuPrincipal");
+  const irSeleccionarProducto = () => {
+    navegador("/seleccionarProducto");
   }
 
   const irMenuPrincipal = () => {
@@ -38,8 +38,8 @@ function MenuInventario(){
           </Button>
         </div>
         <div className="contenedorBotonMenuInventario">
-          <Button onClick={irBuscarModificarEliminarProducto} className="botonMenuInventario">
-            <img src={EditarProducto} className="imagenBotonMenuInventario" onClick={irBuscarModificarEliminarProducto}/>
+          <Button onClick={irSeleccionarProducto} className="botonMenuInventario">
+            <img src={EditarProducto} className="imagenBotonMenuInventario"/>
             <div className="textoBotonesMenuInventario">Editar Producto</div>
           </Button>
         </div>

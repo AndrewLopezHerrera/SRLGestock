@@ -2,11 +2,15 @@ import { Button, Form, Input } from "antd";
 import "./CrearProducto.css"
 import { useNavigate } from "react-router-dom";
 
-function CrearProducto(){
+function EditarProducto(){
   const navegador = useNavigate();
 
-  const crearProducto = () => {
+  const editarProducto = () => {
 
+  }
+
+  const eliminarProducto = () => {
+    
   }
 
   const mostrarError = () => {
@@ -24,7 +28,7 @@ function CrearProducto(){
           <Button onClick={irMenuInventario} className="botonVolver">Volver</Button>
         </div>
         <div className="contenedortituloCrearProducto">
-          <h1 className="tituloCrearProducto">Crear Producto</h1>
+          <h1 className="tituloCrearProducto">Editar Producto</h1>
         </div>
         <div className="contenedorBotonVolverCrearProducto" />
       </div>
@@ -32,7 +36,7 @@ function CrearProducto(){
         <div className="seccionFormularioCrearProducto">
           <Form
             name="crearProductoFormulario"
-            onFinish={crearProducto}
+            onFinish={editarProducto}
             onFinishFailed={mostrarError}
             className="formularioCrearProducto"
           >
@@ -40,10 +44,10 @@ function CrearProducto(){
             <Form.Item
               label="Consecutivo: "
               name="consecutivo"
-              rules={[{ required: true, message: "El consecutivo es obligatorio", type: "number"}]}
+              rules={[{ type: "number"}]}
               className="itemForm"
             >
-              <Input min={1} placeholder="Escriba el consecutivo de producto" type="number" className="entradasTextoInicioSesion" />
+              <Input placeholder="" type="number" className="entradasTextoInicioSesion" disabled/>
             </Form.Item>
 
             <Form.Item
@@ -83,17 +87,37 @@ function CrearProducto(){
             </Form.Item>
 
             <Form.Item
-              label="Cantidad ingresada: "
+              label="Cantidad en inventario: "
+              name="impuesto"
+              rules={[{ type: "number"}]}
+              className="itemForm"
+            >
+              <Input placeholder="" className="entradasTextoInicioSesion" type="number" disabled/>
+            </Form.Item>
+
+            <Form.Item
+              label="Cantidad en inventario: "
               name="impuesto"
               rules={[{ required: true, message: "La cantidad de unidades del producto es obligatorio", type: "number"}]}
               className="itemForm"
             >
-              <Input value={0} min={0} placeholder="Escriba la cantidad de unidades del producto" className="entradasTextoInicioSesion" type="number"/>
+              <Input value={0} min={0} className="entradasTextoInicioSesion" type="number"/>
             </Form.Item>
 
             <Form.Item>
               <Button type="primary" htmlType="submit" block>
-                <b>Crear nuevo producto</b>
+                <b>Editar producto</b>
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                type="primary"
+                danger
+                ghost
+                onClick={eliminarProducto}
+                block
+              >
+                <b>Eliminar producto</b>
               </Button>
             </Form.Item>
           </Form>
@@ -103,4 +127,4 @@ function CrearProducto(){
   );
 }
 ;
-export default CrearProducto;
+export default EditarProducto;
