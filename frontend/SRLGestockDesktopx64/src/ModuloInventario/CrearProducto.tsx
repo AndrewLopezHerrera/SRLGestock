@@ -1,16 +1,50 @@
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, Modal } from "antd";
 import "./CrearProducto.css"
 import { useNavigate } from "react-router-dom";
+import Producto from "./Producto";
+import InfoSesion from "../ModuloSesion/Sesion";
+import { useState } from "react";
 
 function CrearProducto(){
   const navegador = useNavigate();
 
-  const crearProducto = () => {
+  const [error, setError] = useState<boolean>(false);
+  const [tituloError, setTituloError] = useState<string>("");
+  const [cuerpoError, setCuerpoError] = useState<string>(""); 
 
+  const crearProducto = async (producto: Producto ) => {
+    try {
+      console.log(producto);
+      const idSesion : string = InfoSesion.ObtenerIdSesion();
+      const respuestaCrearProducto = await fetch(InfoSesion.ObtenerIPBackend() + "/CrearProducto", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({producto, idSesion}),
+      });
+
+      if (!respuestaCrearProducto.ok) {
+        const { error } = await respuestaCrearProducto.json();
+        throw new Error(error);
+      }
+    }
+    catch (err) {
+      if (typeof err === "object" && err !== null && "message" in err) {
+        setTituloError("Error al crear el producto");
+        setCuerpoError(String((err as any).message));
+      } else {
+        setTituloError("Error al crear el producto");
+        setCuerpoError("Error desconocido");
+      }
+      setError(true);
+    }
   }
 
   const mostrarError = () => {
-
+    setTituloError("Error al crear un producto");
+    setCuerpoError("Por favor, revisa los campos antes de continuar");
+    setError(true);
   }
 
   const irMenuInventario = () => {
@@ -39,16 +73,16 @@ function CrearProducto(){
 
             <Form.Item
               label="Consecutivo: "
-              name="consecutivo"
-              rules={[{ required: true, message: "El consecutivo es obligatorio", type: "number"}]}
+              name="Consecutivo"
+              rules={[{ required: true, message: "El consecutivo es obligatorio"}]}
               className="itemForm"
             >
-              <Input min={1} placeholder="Escriba el consecutivo de producto" type="number" className="entradasTextoInicioSesion" />
+              <Input min={1000000} placeholder="Escriba el consecutivo de producto" type="number" className="entradasTextoInicioSesion" />
             </Form.Item>
 
             <Form.Item
               label="Nombre: "
-              name="nombre"
+              name="Nombre"
               rules={[{ required: true, message: "El nombre del producto es obligatorio"}]}
               className="itemForm"
             >
@@ -57,7 +91,7 @@ function CrearProducto(){
 
             <Form.Item
               label="Descripción: "
-              name="descripcion"
+              name="Descripcion"
               rules={[{ required: true, message: "La descripción del producto es obligatorio"}]}
               className="itemForm"
             >
@@ -66,26 +100,26 @@ function CrearProducto(){
 
             <Form.Item
               label="Precio del producto: "
-              name="precio"
-              rules={[{ required: true, message: "El precio del producto es obligatorio", type: "number"}]}
+              name="Precio"
+              rules={[{ required: true, message: "El precio del producto es obligatorio"}]}
               className="itemForm"
             >
-              <Input placeholder="Escriba el precio del producto" className="entradasTextoInicioSesion" type="number"/>
+              <Input min = {0} value = {0} placeholder="Escriba el precio del producto" className="entradasTextoInicioSesion" type="number"/>
             </Form.Item>
 
             <Form.Item
               label="Impuesto del producto: "
-              name="impuesto"
-              rules={[{ required: true, message: "El impuesto del producto es obligatorio", type: "number"}]}
+              name="Impuesto"
+              rules={[{ required: true, message: "El impuesto del producto es obligatorio"}]}
               className="itemForm"
             >
-              <Input placeholder="Escriba el impuesto del producto" className="entradasTextoInicioSesion" type="number"/>
+              <Input min = {0} max={100} value = {0} placeholder="Escriba el impuesto del producto" className="entradasTextoInicioSesion" type="number"/>
             </Form.Item>
 
             <Form.Item
               label="Cantidad ingresada: "
-              name="impuesto"
-              rules={[{ required: true, message: "La cantidad de unidades del producto es obligatorio", type: "number"}]}
+              name="Cantidad"
+              rules={[{ required: true, message: "La cantidad de unidades del producto es obligatorio"}]}
               className="itemForm"
             >
               <Input value={0} min={0} placeholder="Escriba la cantidad de unidades del producto" className="entradasTextoInicioSesion" type="number"/>
@@ -97,6 +131,16 @@ function CrearProducto(){
               </Button>
             </Form.Item>
           </Form>
+          <div>
+            <Modal
+              title={tituloError}
+              open={error}
+              onOk={() => setError(false)}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <p>{cuerpoError}</p>
+            </Modal>
+          </div>
         </div>
       </div>
     </div>

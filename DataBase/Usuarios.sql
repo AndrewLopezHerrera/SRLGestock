@@ -1,6 +1,6 @@
 --Tablas necesarias
 
-CREATE TABLE Usuario(
+CREATE TABLE IF NOT EXISTS Usuario(
 	IdUsuario SERIAL PRIMARY KEY NOT NULL,
 	CorreoElectronico VARCHAR(50) UNIQUE NOT NULL,
 	Nombre VARCHAR(50) NOT NULL,
@@ -18,19 +18,19 @@ CREATE TABLE Direccion(
 	CONSTRAINT referenciaUsuarioDireccion FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario)
 );
 
-CREATE TABLE Rol(
+CREATE TABLE IF NOT EXISTS Rol(
 	IdRol SERIAL PRIMARY KEY NOT NULL,
 	NombreRol VARCHAR(50) UNIQUE NOT NULL
 );
 
-CREATE TABLE RolUsuario(
+CREATE TABLE IF NOT EXISTS RolUsuario(
 	IdUsuario INT PRIMARY KEY NOT NULL,
 	IdRol INT NOT NULL,
 	CONSTRAINT referenciaUsuarioRol FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario),
 	CONSTRAINT referenciaRol FOREIGN KEY (IdRol) REFERENCES Rol(IdRol)
 );
 
-CREATE TABLE Contrasena(
+CREATE TABLE IF NOT EXISTS Contrasena(
 	IdUsuario INT PRIMARY KEY NOT NULL,
 	ContrasenaActual VARCHAR(60) NOT NULL,
 	CONSTRAINT referenciaUsuarioContrasena FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario)

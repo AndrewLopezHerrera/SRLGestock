@@ -5,6 +5,7 @@ interface Producto {
   Precio: number,
   Impuesto: number,
   Cantidad: number,
+  CantidadVentas: number,
 }
 
 export default Producto;

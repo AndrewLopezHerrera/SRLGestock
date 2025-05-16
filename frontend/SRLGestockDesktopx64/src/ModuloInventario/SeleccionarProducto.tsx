@@ -1,104 +1,57 @@
-import { Button, Input, Card, List } from "antd";
+import { Button, Input, Card, List, Modal } from "antd";
 import "./SeleccionarProducto.css"
-import Producto from "./Producto";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import ProductoLista from "./ProductoLista";
+import InfoSesion from "../ModuloSesion/Sesion";
 
 function SeleccionarProducto(){
   const navegador = useNavigate();
-  const [productos, setProductos] = useState<Producto[]>([
-      {
-        consecutivo: 1,
-        nombre: "Laptop Dell XPS 13",
-        descripcion: "Laptop ultradelgada con pantalla 4K y procesador Intel i7.",
-        precio: 1200,
-        impuesto: 13,
-        cantidad: 5,
-      },
-      {
-        consecutivo: 2,
-        nombre: "Smartphone Samsung Galaxy S21",
-        descripcion: "Smartphone de alta gama con cámara de 108MP y pantalla AMOLED.",
-        precio: 800,
-        impuesto: 13,
-        cantidad: 8,
-      },
-      {
-        consecutivo: 3,
-        nombre: "Auriculares Bose QuietComfort 35 II",
-        descripcion: "Auriculares inalámbricos con cancelación de ruido activa.",
-        precio: 350,
-        impuesto: 13,
-        cantidad: 12,
-      },
-      {
-        consecutivo: 4,
-        nombre: "Smartwatch Apple Watch Series 7",
-        descripcion: "Reloj inteligente con ECG y seguimiento de actividad física.",
-        precio: 400,
-        impuesto: 13,
-        cantidad: 10,
-      },
-      {
-        consecutivo: 5,
-        nombre: "Monitor LG 27UL850-W",
-        descripcion: "Monitor 4K de 27 pulgadas con USB-C y HDR10.",
-        precio: 500,
-        impuesto: 13,
-        cantidad: 15,
-      },
-      {
-        consecutivo: 6,
-        nombre: "Teclado mecánico Logitech G Pro X",
-        descripcion: "Teclado mecánico con interruptores intercambiables y retroiluminación RGB.",
-        precio: 150,
-        impuesto: 13,
-        cantidad: 20,
-      },
-      {
-        consecutivo: 7,
-        nombre: "Cámara DSLR Canon EOS 90D",
-        descripcion: "Cámara DSLR de 32.5 megapíxeles con grabación 4K.",
-        precio: 1300,
-        impuesto: 13,
-        cantidad: 7,
-      },
-      {
-        consecutivo: 8,
-        nombre: "Tablet Apple iPad Pro 11",
-        descripcion: "Tablet de 11 pulgadas con chip M1 y pantalla Liquid Retina.",
-        precio: 800,
-        impuesto: 13,
-        cantidad: 4,
-      },
-      {
-        consecutivo: 9,
-        nombre: "Altavoces Sonos One",
-        descripcion: "Altavoces inalámbricos inteligentes con integración con Alexa y Google Assistant.",
-        precio: 200,
-        impuesto: 13,
-        cantidad: 25,
-      },
-      {
-        consecutivo: 10,
-        nombre: "Impresora HP LaserJet Pro",
-        descripcion: "Impresora láser monocromática con capacidad de impresión dúplex.",
-        precio: 150,
-        impuesto: 13,
-        cantidad: 30,
-      },
-  ]);
+  const [productos, setProductos] = useState<ProductoLista[]>([]);
+  const [error, setError] = useState<boolean>(false);
+  const [tituloError, setTituloError] = useState<string>("");
+  const [cuerpoError, setCuerpoError] = useState<string>(""); 
 
-  const buscarProducto = () => {
+  const buscarProducto = async () => {
+    try {
+      const idSesion : string = InfoSesion.ObtenerIdSesion();
+      const busqueda : string = (document.getElementById("entradaBusqueda") as HTMLInputElement)?.value ?? "";
+      let consecutivo : string = "";
+      let nombre : string = "";
+      if(parseInt(busqueda))
+        consecutivo = busqueda;
+      else
+        nombre = busqueda;
+      const respuestaBusqueda = await fetch(InfoSesion.ObtenerIPBackend() + "/CrearProducto", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({consecutivo, nombre, idSesion}),
+      });
 
+      if (!respuestaBusqueda.ok) {
+        const { error } = await respuestaBusqueda.json();
+        throw new Error(error);
+      }
+
+      const { resultado } = await respuestaBusqueda.json();
+      setProductos(resultado);
+    }
+    catch (err) {
+      if (typeof err === "object" && err !== null && "message" in err) {
+        setTituloError("Error al crear el producto");
+        setCuerpoError(String((err as any).message));
+      } else {
+        setTituloError("Error al crear el producto");
+        setCuerpoError("Error desconocido");
+      }
+      setError(true);
+    }
   }
 
-  const editarProducto = () => {
-    navegador("/editarProducto");
-  }
-
-  const mostrarError = () => {
-
+  const editarProducto = (consecutivo : number) => {
+    navegador("/editarProducto$" + consecutivo);
   }
 
   const irMenuInventario = () => {
@@ -118,8 +71,8 @@ function SeleccionarProducto(){
       </div>
       <div className="contenedorListaSeleccionarProducto">
         <div className="seccionFormularioSeleccionarProducto">
-          <Input placeholder="Escriba el consecutivo o el nombre del producto"  className="entradaSeleccionarProducto" />
-          <Button className="botonBuscarProducto">
+          <Input id="entradaBusqueda" placeholder="Escriba el consecutivo o el nombre del producto"  className="entradaSeleccionarProducto" />
+          <Button className="botonBuscarProducto" onClick={buscarProducto}>
             <b>Buscar</b>
           </Button>
         </div>
@@ -130,17 +83,25 @@ function SeleccionarProducto(){
             renderItem={(producto) => (
               <List.Item>
                 <Card
-                  title={`${producto.nombre} - ₡${producto.precio.toLocaleString()}`}
-                  extra={<Button type="primary" onClick={editarProducto}>Editar</Button>}
+                  title={`${producto.Nombre}`}
+                  extra={<Button type="primary" onClick={() => {editarProducto(producto.Consecutivo)}}>Editar</Button>}
                 >
-                  <p><strong>Consecutivo: </strong> {producto.consecutivo} </p>
-                  <p>{producto.descripcion}</p>
-                  <p><strong>Impuesto:</strong> {producto.impuesto * 100}%</p>
-                  <p><strong>Cantidad:</strong> {producto.cantidad}</p>
+                  <p><strong>Consecutivo: </strong> {producto.Consecutivo} </p>
+                  <p><strong>Ventas:</strong> {producto.Ventas}</p>
                 </Card>
               </List.Item>
             )}
           />
+        </div>
+        <div>
+          <Modal
+            title={tituloError}
+            open={error}
+            onOk={() => setError(false)}
+            cancelButtonProps={{ style: { display: "none" } }}
+          >
+            <p>{cuerpoError}</p>
+          </Modal>
         </div>
       </div>
     </div>

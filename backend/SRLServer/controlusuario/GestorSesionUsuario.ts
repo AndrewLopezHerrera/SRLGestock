@@ -8,12 +8,12 @@ import CorreoElectronico from "../gestorcorreoselectronicos/CorreoElectronico.ts
 
 export default class GestorSesionUsuario {
   private ConexionSQL : ConexionPostgreSQL;
-  private SesionesDeUsuario : Map<string, SesionUsuario>;
+  private static SesionesDeUsuario : Map<string, SesionUsuario>;
   private IniciosDeSesion: Map<string, SesionUsuario>;
 
   constructor(){
     this.ConexionSQL = new ConexionPostgreSQL();
-    this.SesionesDeUsuario = new Map();
+    GestorSesionUsuario.SesionesDeUsuario = new Map();
     this.IniciosDeSesion = new Map();
   }
 
@@ -26,7 +26,7 @@ export default class GestorSesionUsuario {
       throw Error("No existe la sesión de usuario");
     idSesion = await sesion?.IniciarSesion(contrasena);
     this.IniciosDeSesion.delete(correoElectronico);
-    this.SesionesDeUsuario.set(idSesion, sesion);
+    GestorSesionUsuario.SesionesDeUsuario.set(idSesion, sesion);
     return idSesion;
   };
 
@@ -35,12 +35,12 @@ export default class GestorSesionUsuario {
       const usuarioSesion : Usuario = new Usuario(String(usuario.idUsuario), usuario.correoElectronico,
         usuario.nombre, usuario.apellidoPaterno, usuario.apellidoMaterno, usuario.contrasenaActual,
         usuario.nombreRol);
-      const sesion : SesionUsuario = new SesionUsuario(usuarioSesion, this.SesionesDeUsuario);
+      const sesion : SesionUsuario = new SesionUsuario(usuarioSesion, GestorSesionUsuario.SesionesDeUsuario);
       this.IniciosDeSesion.set(correoElectronico, sesion);
   }
 
   public async CrearUsuario(datos: Map<string, string>) : Promise<string>{
-    const usuarioCreador = this.SesionesDeUsuario.get(String(datos.get("idSesion")));
+    const usuarioCreador = GestorSesionUsuario.SesionesDeUsuario.get(String(datos.get("idSesion")));
     if(!usuarioCreador)
       throw new Error("La sesión de usuario no existe o ha expirado.")
     if(!(usuarioCreador.ObtenerUsuario().RecuperarInformaciónGeneral().get("nombreRol") == "Administrador"))
@@ -52,12 +52,12 @@ export default class GestorSesionUsuario {
   }
 
   public CerrarSesion(idSesion: string): boolean {
-    if(!this.SesionesDeUsuario.delete(idSesion))
+    if(!GestorSesionUsuario.SesionesDeUsuario.delete(idSesion))
       throw new Error("No se puede cerrar sesión, ya que no existe la sesión.");
     return true;
   }
   
-  public VerificarEstadoSesion(idSesion: string): boolean {
+  public static VerificarEstadoSesion(idSesion: string): boolean {
     return this.SesionesDeUsuario.has(idSesion);
   }
 
@@ -70,13 +70,13 @@ export default class GestorSesionUsuario {
     const nuevaContrasenaCifrada = await hash(nuevaContrasena, sal);
     if(await this.ConexionSQL.CambiarContrasena(usuario.correoElectronico, nuevaContrasenaCifrada) !== 1)
       throw new Error("No se pudo cambiar la nueva contraseña.");
-    this.SesionesDeUsuario.delete(correoElectronico);
+    GestorSesionUsuario.SesionesDeUsuario.delete(correoElectronico);
     CorreoElectronico.EnviarCorreoElectronico(correoElectronico, "Cambio contraseña",
       "Esta es la nueva contraseña: " + nuevaContrasena, "Recuperación Contraseña");
   }
   
   public RecuperarInformaciónGeneral(idSesion: string): Map<string, string> {
-    const sesion : SesionUsuario | undefined = this.SesionesDeUsuario.get(idSesion);
+    const sesion : SesionUsuario | undefined = GestorSesionUsuario.SesionesDeUsuario.get(idSesion);
     if(!sesion)
       throw new Error("No existe la sesión de usuario.");
     const usuario : Usuario = sesion.ObtenerUsuario();
@@ -88,7 +88,7 @@ export default class GestorSesionUsuario {
   }
 
   public async CambiarContrasena(idSesion: string, contrasenaActual: string, contrasenaNueva: string): Promise<boolean> {
-    const sesion : SesionUsuario | undefined = this.SesionesDeUsuario.get(idSesion);
+    const sesion : SesionUsuario | undefined = GestorSesionUsuario.SesionesDeUsuario.get(idSesion);
     if(!sesion)
       throw new Error("No existe la sesión de usuario.");
     const usuario : Usuario = sesion.ObtenerUsuario();
