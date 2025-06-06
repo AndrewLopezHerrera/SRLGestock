@@ -18,6 +18,23 @@ const seleccionarProductoAux = async (consecutivo : number) => {
   return resultado;
 }
 
+const actualizarProductoAux = async (producto : Producto) => {
+  const idSesion : string = InfoSesion.ObtenerIdSesion();
+  const respuestaActualizar = await fetch(InfoSesion.ObtenerIPBackend() + "/ActualizarProducto", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({producto, idSesion}),
+  });
+  if (!respuestaActualizar.ok) {
+    const { error } = await respuestaActualizar.json();
+    throw new Error(error);
+  }
+  const { resultado } = await respuestaActualizar.json() as { resultado : boolean };
+  return resultado;
+}
+
 const eliminarProductoAux = async (consecutivo : number) => {
   const idSesion : string = InfoSesion.ObtenerIdSesion();
   const respuestaEliminar = await fetch(InfoSesion.ObtenerIPBackend() + "/EliminarProducto", {
@@ -35,4 +52,4 @@ const eliminarProductoAux = async (consecutivo : number) => {
   return resultado;
 }
 
-export { eliminarProductoAux , seleccionarProductoAux };
+export { eliminarProductoAux , actualizarProductoAux , seleccionarProductoAux };

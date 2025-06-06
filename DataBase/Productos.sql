@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS Producto(
-	IdProducto INT PRIMARY KEY NOT NULL,
+	IdProducto BIGINT PRIMARY KEY NOT NULL,
 	Nombre VARCHAR(50) NOT NULL,
 	Descripcion TEXT NOT NULL,
 	Precio MONEY NOT NULL,
@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS Producto(
 );
 
 CREATE TABLE IF NOT EXISTS RegistroVentas(
-	IdProducto INT PRIMARY KEY NOT NULL,
-	Cantidad BIGINT NOT NULL,
+	IdProducto BIGINT PRIMARY KEY NOT NULL,
+	Cantidad INT NOT NULL,
 	CONSTRAINT referenciaProductoVentas FOREIGN KEY (IdProducto) REFERENCES Producto(IdProducto)
 );
 
@@ -30,7 +30,7 @@ CREATE VIEW PRCO AS
 		P.IdProducto = R.IdProducto;
 
 CREATE OR REPLACE FUNCTION CrearProducto(
-	consecutivo INT,
+	consecutivo BIGINT,
 	nombre VARCHAR,
 	descripcion TEXT,
 	precio MONEY,
@@ -57,6 +57,16 @@ BEGIN
 			precio,
 			impuesto,
 			cantidad
+		);
+	INSERT INTO
+		RegistroVentas(
+			IdProducto,
+			Cantidad
+		)
+	VALUES
+		(
+			consecutivo,
+			0
 		);
 	
 	RETURN 1;
@@ -68,37 +78,37 @@ CREATE OR REPLACE FUNCTION BuscarProducto(
 	pNombre VARCHAR
 )
 RETURNS TABLE (
-	Consecutivo INT,
-	Nombre VARCHAR,
-	Ventas INT
+	"Consecutivo" TEXT,
+	"Nombre" VARCHAR,
+	"Ventas" INT
 )
 AS $$
 BEGIN
 	IF pConsecutivo <> '' THEN
     	RETURN QUERY SELECT
-			Consecutivo,
-			Nombre,
-			Ventas
+			PRCO.Consecutivo::text,
+			PRCO.Nombre,
+			PRCO.Ventas
 		FROM
 			PRCO
 		WHERE
-			PRCO.Consecutivo::text LIKE '%' || pConsecutivo || '%'
+			PRCO.Consecutivo::text ILIKE '%' || pConsecutivo || '%'
 		LIMIT 30;
 	ELSIF pNombre <> '' THEN
 		RETURN QUERY SELECT
-			Consecutivo,
-			Nombre,
-			Ventas
+			PRCO.Consecutivo::text,
+			PRCO.Nombre,
+			PRCO.Ventas
 		FROM
 			PRCO
 		WHERE
-			PRCO.Nombre LIKE '%' || pNombre || '%'
+			PRCO.Nombre ILIKE '%' || pNombre || '%'
 		LIMIT 30;
 	ELSE
 	    RETURN QUERY SELECT
-			Consecutivo,
-			Nombre,
-			Ventas
+			PRCO.Consecutivo::text,
+			PRCO.Nombre,
+			PRCO.Ventas
 		FROM
 			PRCO
 		LIMIT 30;
@@ -107,43 +117,51 @@ END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION SeleccionarProducto(
-	pConsecutivo INT
+	pConsecutivo BIGINT
 )
 RETURNS TABLE (
-	Consecutivo INT,
-	Nombre VARCHAR,
-	Descripcion TEXT,
-	Precio MONEY,
-	Impuesto REAL,
-	Cantidad INT,
-	Ventas INT
+	"Consecutivo" TEXT,
+	"Nombre" VARCHAR,
+	"Descripcion" TEXT,
+	"Precio" REAL,
+	"Impuesto" REAL,
+	"Cantidad" INT
 )
 AS $$
 BEGIN
-	SELECT
-		*
+	RETURN QUERY SELECT
+		p.Consecutivo::TEXT,
+		p.Nombre,
+		p.Descripcion,
+		(p.Precio::NUMERIC)::REAL,
+		p.Impuesto,
+		p.Cantidad
 	FROM
-		Producto
+		PRCO p
 	WHERE
-		Producto.Consecutivo = pConsecutivo;
+		p.Consecutivo = pConsecutivo;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION EliminarProducto(
-	pConsecutivo INT
+	pConsecutivo BIGINT
 )
 RETURNS INT AS $$
 BEGIN
 	DELETE FROM
+		RegistroVentas
+	WHERE
+		RegistroVentas.IdProducto = pConsecutivo;
+	DELETE FROM
 		Producto
 	WHERE
-		Producto.Consecutivo = pConsecutivo;
+		Producto.IdProducto = pConsecutivo;
 	RETURN 1;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 CREATE OR REPLACE FUNCTION EditarProducto(
-	consecutivo INT,
+	consecutivo BIGINT,
 	nombre VARCHAR,
 	descripcion TEXT,
 	precio MONEY,
@@ -153,24 +171,15 @@ CREATE OR REPLACE FUNCTION EditarProducto(
 RETURNS INT AS $$
 BEGIN
 
-    INSERT INTO
-		Producto(
-			IdProducto,
-			Nombre,
-			Descripcion,
-			Precio,
-			Impuesto,
-			Cantidad
-		)
-	VALUES
-		(
-			consecutivo,
-			nombre,
-			descripcion,
-			precio,
-			impuesto,
-			cantidad
-		);
+    UPDATE Producto
+    SET
+        Nombre = nombre,
+        Descripcion = descripcion,
+        Precio = precio,
+        Impuesto = impuesto,
+        Cantidad = Cantidad + cantidad
+    WHERE
+        IdProducto = consecutivo;
 	
 	RETURN 1;
 END;

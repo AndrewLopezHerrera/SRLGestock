@@ -7,6 +7,7 @@ import iconoInventario from "../images/InventarioIcono.png"
 import iconoManana from "../images/iconoManana.png"
 import iconoTarde from "../images/iconoTarde.png"
 import iconoNoche from "../images/iconoNoche.png"
+import iconoTazaCafe from "../images/TazaCafeIcono.png"
 import "./PantallaPrincpal.css"
 import InfoSesion from "../ModuloSesion/Sesion";
 
@@ -27,9 +28,10 @@ function MenuPrincipal(){
 
   const obtenerIconoDelDia = (): string => {
     const hora: number = new Date().getHours();
-  
     if (hora >= 5 && hora < 12) {
       return iconoManana;
+    } else if(hora >= 15 && hora < 16) {
+      return iconoTazaCafe;
     } else if (hora >= 12 && hora < 18) {
       return iconoTarde;
     } else {
@@ -49,7 +51,7 @@ function MenuPrincipal(){
     }
   };
 
-  const irUsuariosEmpleados = () => {
+  const irAdministracion = () => {
     navegador("/administracion");
   }
 
@@ -59,6 +61,10 @@ function MenuPrincipal(){
   
   const irMenuInventario = () => {
     navegador("/menuInventario");
+  }
+
+  const irMenuFacturacion = () => {
+    navegador("/menuFacturacion")
   }
 
   return(
@@ -76,14 +82,14 @@ function MenuPrincipal(){
       </div>
       <div className="contenedorBotonesMenuPrincipal">
         <div className="contenedorBotonMenuPrincipal">
-          <Button className="botonMenuPrincipal">
+          <Button className="botonMenuPrincipal" onClick={irMenuFacturacion}>
             <img src={iconoFactura} className="imagenBotonMenuPrincipal"/>
             <div className="textoBotonesMenuPrincipal">Facturación</div>
           </Button>
         </div>
         <div className="contenedorBotonMenuPrincipal">
-          <Button className="botonMenuPrincipal">
-            <img src={iconoInventario} className="imagenBotonMenuPrincipal" onClick={irMenuInventario}/>
+          <Button className="botonMenuPrincipal" onClick={irMenuInventario}>
+            <img src={iconoInventario} className="imagenBotonMenuPrincipal"/>
             <div className="textoBotonesMenuPrincipal">Gestión de inventario</div>
           </Button>
         </div>
@@ -95,9 +101,9 @@ function MenuPrincipal(){
         </div>
         {verificarEsAdministrador() &&
           <div className="contenedorBotonMenuPrincipal">
-            <Button className="botonMenuPrincipal" onClick={irUsuariosEmpleados}>
+            <Button className="botonMenuPrincipal" onClick={irAdministracion}>
               <img src={iconoEquipo} className="imagenBotonMenuPrincipal"/>
-              <div className="textoBotonesMenuPrincipal">Usuarios de empleados</div>
+              <div className="textoBotonesMenuPrincipal">Administración</div>
             </Button>
           </div>
         }

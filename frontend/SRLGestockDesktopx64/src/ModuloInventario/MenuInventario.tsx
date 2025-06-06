@@ -40,7 +40,7 @@ function MenuInventario(){
         <div className="contenedorBotonMenuInventario">
           <Button onClick={irSeleccionarProducto} className="botonMenuInventario">
             <img src={EditarProducto} className="imagenBotonMenuInventario"/>
-            <div className="textoBotonesMenuInventario">Editar Producto</div>
+            <div className="textoBotonesMenuInventario">Buscar/Editar/Eliminar Producto</div>
           </Button>
         </div>
       </div>

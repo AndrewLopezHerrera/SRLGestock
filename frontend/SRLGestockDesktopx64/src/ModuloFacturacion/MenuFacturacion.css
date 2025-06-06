@@ -1,0 +1,79 @@
+.contenedorMenuFacturacion{
+    width: 100vw;
+    height: 100vh;
+    background-color: #16B2EC;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contenedortituloMenuFacturacion{
+    width: 87vw;
+    height: 40vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contenedorTituloBotonVolverMenuFacturacion{
+    width: 100vw;
+    height: 20vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.tituloMenuFacturacion{
+    font-size: 5vw;
+    color: white;
+}
+
+.contenedortituloMenuFacturacion{
+    height: 100%;
+    width: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contenedorBotonVolverMenuFacturacion{
+    height: 100%;
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.imagenBotonMenuFacturacion{
+    width: 60%;
+    height: auto;
+}
+
+.contenedorBotonesMenuFacturacion{
+    width: 100vw;
+    height: 80vh;
+    display: flex;
+    overflow-x: auto;
+    align-items: center;
+    justify-content: space-around;
+    flex-direction: row;
+}
+
+.botonMenuFacturacion{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-color: transparent;
+}
+
+.textoBotonesMenuFacturacion{
+    font-size: x-large;
+    max-width: 100%;
+}
+
+.contenedorBotonMenuFacturacion{
+    width: 30vw;
+    height: 60vh;
+  }

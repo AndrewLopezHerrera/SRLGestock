@@ -1,0 +1,157 @@
+.contenedorPantallaFacturacion{
+  width: 100vw;
+  height: 100vh;
+  background-color: #16B2EC;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contenedorCuerpoFacturacion{
+  height: 80%;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.tituloInformacionCliente {
+  color: black;
+  width: 80%;
+  text-align: center;
+  font-size:x-large;
+}
+
+.entradaInformacionCliente {
+  width: 80%;
+}
+
+.contenedorFacturacion {
+  height: 95%;
+  width: 60%;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+  background-color: white;
+  border-radius: 30px;
+}
+
+.contenedorInformacionClienteFacturacion{
+  height: 95%;
+  width: 30%;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.25);
+  background-color: white;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.contenedorEntradaBusquedaProductosFactura {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.entradaBusquedaProductosFactura {
+  width: 80%;
+}
+
+.contenedorTablaFactura {
+  height: 70%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tablaFactura {
+  width: 100%;
+  height: 100%;
+}
+
+.ant-table-tbody > tr > td {
+  font-size: smaller;
+}
+
+.contedorSubtotalTotalFactura {
+  width: 100%;
+  height: 10%;
+  color: black;
+}
+
+.contenedorSubtotal {
+  width: 100%;
+  height: 50%;
+  border-top: 1px solid #cccccc;
+  border-bottom: 1px solid #cccccc;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.contenedorTotal {
+  width: 100%;
+  height: 50%;
+  border-bottom: 1px solid #cccccc;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.subTotal {
+  height: 100%;
+  width: 80%;
+}
+
+.total {
+  height: 100%;
+  width: 80%;
+}
+
+.contenedorBotonesFacturacion {
+  height: 10%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+}
+
+.imagenEliminarLinea{
+  width: 100%;
+  height: 100%;
+}
+
+.botonEliminarLinea{
+  height: 3vw;
+  width: auto;
+}
+
+@media (max-width: 1200px) {
+  .contenedorCuerpoFacturacion {
+    flex-direction: column;
+    height: auto;
+    justify-content: center;
+  }
+
+  .contenedorPantallaFacturacion{
+    height: auto;
+  }
+
+  .contenedorInformacionClienteFacturacion{
+    width: 90%;
+    height: 80vh;
+    justify-content: space-around;
+    margin-bottom: 5vh;
+  }
+
+  .contenedorFacturacion{
+    width: 90%;
+    height: 80vh;
+    justify-content: center;
+    margin-bottom: 5vh;
+  }
+}

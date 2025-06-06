@@ -5,8 +5,7 @@ CREATE TABLE IF NOT EXISTS Usuario(
 	CorreoElectronico VARCHAR(50) UNIQUE NOT NULL,
 	Nombre VARCHAR(50) NOT NULL,
 	ApellidoPaterno VARCHAR(50) NOT NULL,
-	ApellidoMaterno VARCHAR(50) NOT NULL,
-	Telefono VARCHAR(50) NOT NULL
+	ApellidoMaterno VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE Direccion(
@@ -34,7 +33,7 @@ CREATE TABLE IF NOT EXISTS Contrasena(
 	IdUsuario INT PRIMARY KEY NOT NULL,
 	ContrasenaActual VARCHAR(60) NOT NULL,
 	CONSTRAINT referenciaUsuarioContrasena FOREIGN KEY (IdUsuario) REFERENCES Usuario(IdUsuario)
-)
+);
 
 --Datos necesarios
 
@@ -228,4 +227,6 @@ GRANT EXECUTE ON FUNCTION ActualizarDatos(INT,VARCHAR(50),VARCHAR(50),VARCHAR(50
 GRANT EXECUTE ON FUNCTION TraerRolesActuales() TO backend;
 
 ALTER DEFAULT PRIVILEGES IN SCHEMA public
-REVOKE ALL ON TABLES FROM usuario_backend;
+REVOKE ALL ON TABLES FROM backend;
+
+GRANT USAGE ON SCHEMA public TO backend;

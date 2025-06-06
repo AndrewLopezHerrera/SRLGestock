@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Input, Modal } from "antd";
+import { Form, Button, Input, Modal, Spin } from "antd";
 import "./InicioSesion.css"
 import InfoSesion from "./Sesion";
 import { useState } from "react";
@@ -7,12 +7,14 @@ import { useState } from "react";
 function InicioSesion(){
   const [error, setError] = useState<boolean>(false);
   const [tituloError, setTituloError] = useState<string>("");
-  const [cuerpoError, setCuerpoError] = useState<string>(""); 
+  const [cuerpoError, setCuerpoError] = useState<string>("");
+  const [cargando, setCargando] = useState<boolean>(false);
 
   const navegador = useNavigate();
 
   const iniciarSesion = async (datos: { correoElectronico: string; contrasena: string }) => {
     try {
+      setCargando(true);
       const respuestaInicioSesion = await fetch(InfoSesion.ObtenerIPBackend() + "/IniciarSesion", {
         method: "POST",
         headers: {
@@ -48,6 +50,7 @@ function InicioSesion(){
       navegador("/menuPrincipal");
     }
     catch (err) {
+      setCargando(false);
       if (typeof err === "object" && err !== null && "message" in err) {
         setTituloError("Error al iniciar sesión");
         setCuerpoError(String((err as any).message));
@@ -119,6 +122,7 @@ function InicioSesion(){
               <p>{cuerpoError}</p>
             </Modal>
           </div>
+          <Spin spinning={cargando} fullscreen size="large"/>
         </div>
       </div>
     </div>

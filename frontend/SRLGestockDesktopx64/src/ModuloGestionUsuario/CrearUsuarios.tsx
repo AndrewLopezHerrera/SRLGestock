@@ -1,4 +1,4 @@
-import { Form, Button, Input, Select, Modal } from "antd";
+import { Form, Button, Input, Select, Modal, Spin } from "antd";
 import "./CrearUsuarios.css"
 import InfoSesion from "../ModuloSesion/Sesion";
 import { useState } from "react";
@@ -9,6 +9,7 @@ function CreacionUsuario(){
   const [esVisible, setEsVisible] = useState<boolean>(false);
   const [tituloModal, setTituloModal] = useState<string>("");
   const [cuerpoModal, setCuerpoModal] = useState<string>("");
+  const [cargando, setCargando] = useState<boolean>(false);
 
   const crearUsuario = async (
       datos: {correoElectronico: string, 
@@ -19,6 +20,7 @@ function CreacionUsuario(){
     }) => {
     datos.idSesion = InfoSesion.ObtenerIdSesion();
     try {
+      setCargando(true);
       const response = await fetch(InfoSesion.ObtenerIPBackend() + "/CrearUsuario", {
         method: "POST",
         headers: {
@@ -26,20 +28,19 @@ function CreacionUsuario(){
         },
         body: JSON.stringify(datos),
       });
-
       if (!response.ok) {
         const { error } = await response.json();
         throw new Error(error);
       }
-
       const { idUsuario } = await response.json();
-
+      setCargando(false);
       setTituloModal("Usuario creado");
       setCuerpoModal("El ID del nuevo usuario es: " + String(idUsuario));
       setEsVisible(true);
 
     }
     catch (err) {
+      setCargando(false);
       setTituloModal("Error al crear el nuevo usuario");
       if (typeof err === "object" && err !== null && "message" in err) {
         setCuerpoModal(String((err as any).message));
@@ -133,6 +134,7 @@ function CreacionUsuario(){
             <p>{cuerpoModal}</p>
           </Modal>
         </div>
+        <Spin spinning={cargando} size="large" fullscreen />
       </div>
     </div>
   );

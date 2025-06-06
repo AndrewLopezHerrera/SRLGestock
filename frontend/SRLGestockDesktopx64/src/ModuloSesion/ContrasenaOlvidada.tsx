@@ -1,20 +1,24 @@
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Input, Modal } from "antd";
+import { Form, Button, Input, Modal, Spin } from "antd";
 import "./InicioSesion.css"
 import InfoSesion from "./Sesion";
 import { useState } from "react";
 
 function ContrasenaOlvidada(){
 
+  const [esVisibleError, setEsVisibleError] = useState<boolean>(false);
+  const [tituloModalError, setTituloModalError] = useState<string>("");
+  const [cuerpoModalError, setCuerpoModalError] = useState<string>("");
   const [esVisible, setEsVisible] = useState<boolean>(false);
   const [tituloModal, setTituloModal] = useState<string>("");
-  const [cuerpoModal, setCuerpoModal] = useState<string>(""); 
+  const [cuerpoModal, setCuerpoModal] = useState<string>("");
+  const [cargando, setCargando] = useState<boolean>(false);
 
   const navegador = useNavigate();
 
   const recuperarContrasena = async (datos: { correoElectronico: string}) => {
-
     try {
+      setCargando(true);
       const response = await fetch(InfoSesion.ObtenerIPBackend() + "/RecuperarContrasena", {
         method: "POST",
         headers: {
@@ -27,24 +31,26 @@ function ContrasenaOlvidada(){
         const { error } = await response.json();
         throw new Error(error);
       }
-
-      navegador("/");
+      setCargando(false);
+      setTituloModal("Contraseña cambiada");
+      setCuerpoModal("Se ha cambiado la contraseña exitosamente");
+      setEsVisible(true);
     }
     catch (err) {
-      setTituloModal("Error al recuperar contraseña");
+      setTituloModalError("Error al recuperar contraseña");
       if (typeof err === "object" && err !== null && "message" in err) {
-        setCuerpoModal(String((err as any).message));
+        setCuerpoModalError(String((err as any).message));
       } else {
-        setCuerpoModal("Error desconocido.");
+        setCuerpoModalError("Error desconocido.");
       }
-      setEsVisible(true);
+      setEsVisibleError(true);
     }
   }
 
   const mostrarError = () => {
-    setTituloModal("Error al recuperar contraseña");
-    setCuerpoModal("Por favor, revisa los campos antes de continuar");
-    setEsVisible(true);
+    setTituloModalError("Error al recuperar contraseña");
+    setCuerpoModalError("Por favor, revisa los campos antes de continuar");
+    setEsVisibleError(true);
   }
 
   const volverInicioSesion = () => {
@@ -84,14 +90,25 @@ function ContrasenaOlvidada(){
           </Button>
           <div>
             <Modal
+              title={tituloModalError}
+              open={esVisibleError}
+              onOk={() => setEsVisibleError(false)}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <p>{cuerpoModalError}</p>
+            </Modal>
+          </div>
+          <div>
+            <Modal
               title={tituloModal}
               open={esVisible}
-              onOk={() => setEsVisible(false)}
+              onOk={() => volverInicioSesion()}
               cancelButtonProps={{ style: { display: "none" } }}
             >
               <p>{cuerpoModal}</p>
             </Modal>
           </div>
+          <Spin spinning={cargando} size="large" fullscreen />
         </div>
       </div>
     </div>

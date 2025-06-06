@@ -3,7 +3,7 @@ class InfoSesion {
   private static NombreUsuario : string;
   private static PrimerApellidoUsuario : string;
   private static RolUsuario: string;
-  private static readonly IPBackend : string = "http://localhost:8080";
+  private static readonly IPBackend : string = "http://209.50.62.227:8080";
 
   public static IniciarSesion(idSesion : string, nombreUsuario : string,
     primerApellidoUsuario : string, rolUsuario: string) : void {

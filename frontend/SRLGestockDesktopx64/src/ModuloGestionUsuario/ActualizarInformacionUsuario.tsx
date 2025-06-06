@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Form, Button, Input, Modal } from "antd";
+import { Form, Button, Input, Modal, Spin } from "antd";
 import "./ActualizarInformacionUsuario.css"
 import InfoSesion from "../ModuloSesion/Sesion";
 import { useEffect, useState } from "react";
@@ -15,14 +15,18 @@ function ActualizacionInformacionUsuario(){
   const [segundoApellidoUsuario, setSegundoApellidoUsuario] = useState<string>("");
   const [idUsuario, setIdUsuario] = useState<string>("");
   const [rolUsuario, setRolUsuario] = useState<string>("");
+  const [cargando, setCargando] = useState<boolean>(false);
 
   const navegador = useNavigate();
 
   useEffect(() => {
     const ejecutar = async () => {
       try {
+        setCargando(true);
         await mostrarInformacionGeneral();
+        setCargando(false);
       } catch (err) {
+        setCargando(false);
         setTituloModal("Error al mostrar datos del usuario");
         if (typeof err === "object" && err !== null && "message" in err) {
           setCuerpoModal(String((err as any).message));
@@ -70,6 +74,7 @@ function ActualizacionInformacionUsuario(){
         throw new Error("Las contraseñas nuevas no coinciden");
       if(datos.contrasenaNueva == datos.contrasenaActual)
         throw new Error("La contraseña no puede ser igual a la anterior");
+      setCargando(true);
       const response = await fetch(InfoSesion.ObtenerIPBackend() + "/CambiarContrasena", {
         method: "POST",
         headers: {
@@ -81,11 +86,13 @@ function ActualizacionInformacionUsuario(){
         const { error } = await response.json();
         throw new Error(error);
       }
+      setCargando(false);
       setTituloModal("Contraseña actualizado");
       setCuerpoModal("Su contraseña se ha actualizado");
       setEsVisible(true);
     }
     catch (err) {
+      setCargando(false);
       setTituloModal("Error al actualizar el usuario");
       if (typeof err === "object" && err !== null && "message" in err) {
         setCuerpoModal(String((err as any).message));
@@ -99,7 +106,7 @@ function ActualizacionInformacionUsuario(){
 
   const cerrarSesion = async () => {
     const idSesion : string = InfoSesion.ObtenerIdSesion();
-      fetch(InfoSesion.ObtenerIPBackend() + "/CerrarSesion", {
+    fetch(InfoSesion.ObtenerIPBackend() + "/CerrarSesion", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -111,6 +118,7 @@ function ActualizacionInformacionUsuario(){
   }
 
   const mostrarError = () => {
+    setTituloModal("Error al cambiar contraseña")
     setCuerpoModal("Por favor, revisa los campos antes de continuar");
     setEsVisible(true);
   }
@@ -250,6 +258,7 @@ function ActualizacionInformacionUsuario(){
       >
         <p>{cuerpoModal}</p>
       </Modal>
+      <Spin spinning={cargando} size="large" fullscreen />
     </div>
   );
 }

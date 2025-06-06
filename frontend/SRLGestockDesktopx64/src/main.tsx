@@ -11,6 +11,8 @@ import MenuInventario from './ModuloInventario/MenuInventario';
 import CrearProducto from './ModuloInventario/CrearProducto';
 import SeleccionarProducto from './ModuloInventario/SeleccionarProducto';
 import EditarProducto from './ModuloInventario/EditarProducto';
+import MenuFacturacion from './ModuloFacturacion/MenuFacturacion';
+import PantallaFacturacion from './ModuloFacturacion/PantallaFacturacion';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -25,6 +27,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/crearProducto" element={<CrearProducto />} />
         <Route path="/seleccionarProducto" element={<SeleccionarProducto />} />
         <Route path="/editarProducto/:id" element={<EditarProducto />} />
+        <Route path="/menuFacturacion" element={<MenuFacturacion />} />
+        <Route path="/pantallaFacturacion" element={<PantallaFacturacion />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,
