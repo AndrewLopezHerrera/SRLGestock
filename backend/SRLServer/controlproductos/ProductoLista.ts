@@ -1,5 +1,5 @@
 interface ProductoLista{
-  Consecutivo: number,
+  Consecutivo: number | string,
   Nombre: string,
   Ventas: number,
 }

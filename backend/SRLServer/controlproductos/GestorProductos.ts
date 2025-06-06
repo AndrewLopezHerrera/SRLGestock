@@ -33,7 +33,12 @@ class GestorProductos{
     return respuesta;
   }
   
-  public async ModificarProducto(datos: Map<string, string>, sesion: string): Promise<boolean> {
+  public async ModificarProducto(producto: Producto, sesion: string): Promise<boolean> {
+    if(!GestorSesionUsuario.VerificarEstadoSesion(sesion))
+      throw new Error("La sesión de usuario no existe");
+    const respuesta : number = await this.ConexionSQL.ActualizarProducto(producto);
+    if(respuesta != 1)
+      throw new Error("No se ha podido actualizar el producto");
     return true;
   }
   
@@ -42,7 +47,7 @@ class GestorProductos{
       throw new Error("La sesión de usuario no existe");
     const resultado : number = await this.ConexionSQL.EliminarProducto(consecutivoProducto);
     if(resultado != 1)
-      throw new Error("No se ha podido eliminar el producto")
+      throw new Error("No se ha podido eliminar el producto");
     return true;
   }
 }
