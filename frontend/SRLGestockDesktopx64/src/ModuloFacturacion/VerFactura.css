@@ -1,0 +1,80 @@
+.contenedorVerFactura{
+  width: 100vw;
+  height: 100vh;
+  background-color: #16B2EC;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contenedorTituloBotonVolverVerFactura{
+  width: 100vw;
+  height: 20vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.tituloVerFactura{
+  font-size: 5vw;
+  color: white;
+}
+
+.contenedortituloVerFactura{
+  height: 100%;
+  width: 60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenedorBotonVolverVerFactura{
+  height: 100%;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenedorInformacionFactura {
+  padding: 20px;
+  background-color: #f7f9fc; /* azul muy claro */
+  border-radius: 8px;
+  border-radius: 30px;
+  overflow-y: auto;
+  width: 80%;
+  height: 70%;
+}
+
+/* Personalizar tabla */
+.tablaInformacionFactura .ant-table-thead > tr > th {
+  background-color: #1890ff; /* azul principal de Ant Design */
+  color: white;
+  font-weight: bold;
+}
+
+.tablaInformacionFactura .ant-table-tbody > tr > td {
+  background-color: #ffffff;
+}
+
+/* Descriptions más contrastado */
+.ant-descriptions-bordered .ant-descriptions-item-label {
+  background-color: #e6f7ff; /* azul claro */
+  font-weight: bold;
+}
+
+.ant-descriptions-bordered .ant-descriptions-item-content {
+  background-color: #ffffff;
+}
+
+/* Títulos de secciones */
+.ant-descriptions-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #000000;
+}
+
+.tablaInformacionFactura{
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+}

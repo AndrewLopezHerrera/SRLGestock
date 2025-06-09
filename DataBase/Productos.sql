@@ -123,7 +123,7 @@ RETURNS TABLE (
 	"Consecutivo" TEXT,
 	"Nombre" VARCHAR,
 	"Descripcion" TEXT,
-	"Precio" REAL,
+	"Precio" NUMERIC,
 	"Impuesto" REAL,
 	"Cantidad" INT
 )
@@ -133,7 +133,7 @@ BEGIN
 		p.Consecutivo::TEXT,
 		p.Nombre,
 		p.Descripcion,
-		(p.Precio::NUMERIC)::REAL,
+		p.Precio::NUMERIC,
 		p.Impuesto,
 		p.Cantidad
 	FROM

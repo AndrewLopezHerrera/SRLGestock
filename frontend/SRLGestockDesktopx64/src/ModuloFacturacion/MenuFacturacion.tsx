@@ -12,7 +12,7 @@ function MenuFacturacion(){
   };
 
   const irVerFacturas = () => {
-    navegador("");
+    navegador("/buscarFactura");
   }
 
   const irMenuPrincipal = () => {

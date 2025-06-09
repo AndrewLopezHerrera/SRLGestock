@@ -13,6 +13,8 @@ import SeleccionarProducto from './ModuloInventario/SeleccionarProducto';
 import EditarProducto from './ModuloInventario/EditarProducto';
 import MenuFacturacion from './ModuloFacturacion/MenuFacturacion';
 import PantallaFacturacion from './ModuloFacturacion/PantallaFacturacion';
+import BuscarFactura from './ModuloFacturacion/BuscarFactura';
+import VerFactura from './ModuloFacturacion/VerFactura';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -29,6 +31,8 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/editarProducto/:id" element={<EditarProducto />} />
         <Route path="/menuFacturacion" element={<MenuFacturacion />} />
         <Route path="/pantallaFacturacion" element={<PantallaFacturacion />} />
+        <Route path="/buscarFactura" element={<BuscarFactura />} />
+        <Route path="/verFactura/:id/:seccion" element={<VerFactura />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>,

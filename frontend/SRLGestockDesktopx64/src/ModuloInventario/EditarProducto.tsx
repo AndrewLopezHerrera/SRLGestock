@@ -172,16 +172,15 @@ function EditarProducto(){
             <Form.Item
               label="Impuesto del producto: "
               name="Impuesto"
-              rules={[{ required: true, message: "El impuesto del producto es obligatorio" }]}
+              rules={[{ required: true, message: "El impuesto del producto es obligatorio. Debe estar entre 0 y 100."}]}
               className="itemForm"
             >
               <InputNumber<number>
                 min = {0}
                 max={100}
                 step={0.01}
-                placeholder="Escriba el impuesto del producto. Debe estar entre 0% y 100%"
+                placeholder="Escriba el impuesto del producto. Debe estar entre 0% y 100%."
                 className="entradasTextoInicioSesion"
-                type="number"
                 formatter={(value) => `${value}%`}
                 parser={(value) => value?.replace('%', '') as unknown as number}
               />
