@@ -6,17 +6,20 @@ import ConexionUsuario from "./ConexionUsuario.ts";
 import ClientePostgreSQL from "../conexionsql/ClientePostgreSQL.ts";
 import { oakCors } from "https://deno.land/x/cors@v1.2.2/mod.ts";
 import ConexionProducto from "./ConexionProducto.ts";
+import ConexionFactura from "./ConexionFactura.ts";
 
 class Conexion {
   private App : Application;
   private Enrutador : Router;
   private ConexionActualUsuario : ConexionUsuario;
   private ConexionActualProducto : ConexionProducto;
+  private ConexionActualFactura : ConexionFactura;
   constructor() {
     this.App = new Application();
     this.Enrutador = new Router();
     this.ConexionActualUsuario = new ConexionUsuario(this.Enrutador);
-    this.ConexionActualUsuario = new ConexionProducto(this.Enrutador);
+    this.ConexionActualProducto = new ConexionProducto(this.Enrutador);
+    this.ConexionActualFactura = new ConexionFactura(this.Enrutador);
     ClientePostgreSQL.Conectar();
   }
 

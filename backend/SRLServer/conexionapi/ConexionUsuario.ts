@@ -131,7 +131,7 @@ export default class ConexionUsuario {
         const { idSesion } = await contexto.request.body({ type: "json" }).value;
         if(!idSesion)
           throw new Error("El id de sesión es inválido.");
-        const informacion : Map<string, string> = this.GestorSesionesUsuario.RecuperarInformaciónGeneral(idSesion);
+        const informacion : Map<string, string> = GestorSesionUsuario.RecuperarInformaciónGeneral(idSesion);
         const informacionObject = Object.fromEntries(informacion);
         contexto.response.status = 200;
         contexto.response.body = informacionObject;
