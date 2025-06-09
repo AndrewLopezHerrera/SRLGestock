@@ -75,7 +75,7 @@ export default class GestorSesionUsuario {
       "Esta es la nueva contraseña: " + nuevaContrasena, "Recuperación Contraseña");
   }
   
-  public RecuperarInformaciónGeneral(idSesion: string): Map<string, string> {
+  public static RecuperarInformaciónGeneral(idSesion: string): Map<string, string> {
     const sesion : SesionUsuario | undefined = GestorSesionUsuario.SesionesDeUsuario.get(idSesion);
     if(!sesion)
       throw new Error("No existe la sesión de usuario.");

@@ -16,6 +16,7 @@ export default class ConexionProducto {
     this.CrearProducto();
     this.VerProductos();
     this.SeleccionarProducto();
+    this.ActualizarProducto();
     this.EliminarProducto();
   }
 
@@ -35,6 +36,13 @@ export default class ConexionProducto {
             || !Cantidad
             || !idSesion)
           throw new Error("Datos incompletos");
+        const regex = /^\d{1,15}$/
+        if(!regex.test(String(producto.Consecutivo))
+          || !regex.test(String(producto.Precio))
+          || !regex.test(String(producto.Cantidad)))
+          throw new Error("Los números no deben tener más de 15 dígitos");
+        if(producto.Impuesto > 100 || producto.Impuesto < 0)
+          throw new Error("El impuesto debe estar entre 0 y 100");
         const resultado : boolean = await this.Gestor.AgregarProducto(producto, idSesion);
         if(!resultado)
           throw new Error("Sucedió un error al crear el producto");
@@ -61,8 +69,8 @@ export default class ConexionProducto {
           nombre: string;
           idSesion: string;
         };
-        if(!consecutivo
-            || !nombre
+        if(consecutivo == null
+            || nombre == null
             || !idSesion)
           throw new Error("Datos incompletos o incorrectos");
         const resultado : ProductoLista[] = await this.Gestor.VerProductos(consecutivo, nombre, idSesion);
@@ -110,6 +118,40 @@ export default class ConexionProducto {
       }
     });
   };
+
+  private ActualizarProducto(): void {
+    this.Enrutador.post("/ActualizarProducto", async (contexto : Context) => {
+      try {
+        const { producto, idSesion } = await contexto.request.body({ type: "json" }).value as {
+          producto: Producto;
+          idSesion: string;
+        };
+        const { Consecutivo, Nombre, Descripcion, Precio, Impuesto, Cantidad } = producto;
+        if(!Consecutivo
+            || !Nombre
+            || !Descripcion
+            || Precio < 0
+            || Impuesto < 0
+            || Cantidad < 0
+            || !idSesion)
+          throw new Error("Datos incompletos");
+        const resultado : boolean = await this.Gestor.ModificarProducto(producto, idSesion);
+        if(!resultado)
+          throw new Error("Sucedió un error al recuperar los producto");
+        contexto.response.status = 200;
+        contexto.response.body = {resultado};
+      } catch (error) {
+        contexto.response.status = 400;
+        if (error instanceof Error) {
+          contexto.response.body = { error : error.message };
+          console.log(error.message);
+        } else {
+          contexto.response.body = { error : "Error desconocido en el servidor. Si el problema persiste comuniquese con el administrador" };
+          console.log("Error desconocido: Seleccionar producto");
+        }
+      }
+    });
+  }
 
   private EliminarProducto() : void {
     this.Enrutador.post("/EliminarProducto", async (contexto : Context) => {

@@ -11,8 +11,8 @@ export default class ClientePostgreSQL {
     this.ConexionPostgreSQL = new Client({
       user: "backend",
       password: "askjfnsodpme",
-      database: "SRLGestock",
-      hostname: "172.21.210.194",
+      database: "SRLDataBase",
+      hostname: "127.0.0.1",
       port: 5432
     });
     this.ConexionPostgreSQL.connect();
