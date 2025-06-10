@@ -1,15 +1,16 @@
-import { Breakpoint, Button, Cascader, CascaderProps, Input, InputNumber, Table } from "antd";
+import { Breakpoint, Button, Cascader, CascaderProps, Form, Input, InputNumber, Modal, Spin, Table } from "antd";
 import "./PantallaFacturacion.css"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import eliminarIcono from "../images/EliminarIcono.png"
 import LineaFactura from "./LineaFactura";
 import ProductoLista from "../ModuloInventario/ProductoLista";
-import { TraerProductosCoincidencias } from "./FuncionesAuxiliaresCrearFactura";
+import { CrearFacturaAux, TraerProductosCoincidencias } from "./FuncionesAuxiliaresCrearFactura";
 import CoincidenciaBusqueda from "./CoincidenciaBusqueda";
 import Producto from "../ModuloInventario/Producto";
 import { seleccionarProductoAux } from "../ModuloInventario/FuncionesAuxiliaresEditarProducto";
 import { DefaultOptionType } from "antd/es/select";
+import Factura from "./Factura";
 
 function PantallaFacturacion(){
   const navegador = useNavigate();
@@ -17,6 +18,19 @@ function PantallaFacturacion(){
   const [lineas, setLineas] = useState<LineaFactura[]>([]);
   const [subtotal, setSubtotal] = useState<number>(0);
   const [total, setTotal] = useState<number>(0);
+  const [error, setError] = useState<boolean>(false);
+  const [tituloError, setTituloError] = useState<string>("");
+  const [cuerpoError, setCuerpoError] = useState<string>("");
+  const [cargando, setCargando] = useState<boolean>(false);
+  const [cedula, setCedula] = useState('');
+  const [correoElectronico, setCorreoElectronico] = useState('');
+  const [nombre, setNombre] = useState('');
+  const [primerApellido, setPrimerApellido] = useState('');
+  const [segundoApellido, setSegundoApellido] = useState('');
+  const [provincia, setProvincia] = useState('');
+  const [canton, setCanton] = useState('');
+  const [distrito, setDistrito] = useState('');
+  const [senas, setSenas] = useState('');
   const encabezados = [
     {
       title: 'Consecutivo',
@@ -105,21 +119,37 @@ function PantallaFacturacion(){
   }
 
   const SeleccionarProducto: CascaderProps<CoincidenciaBusqueda>['onChange'] = async (value) => {
-    const consecutivo : number = Number(value.pop());
-    if(!lineas.find(linea => linea.Consecutivo == consecutivo )){
-      const producto : Producto = await seleccionarProductoAux(consecutivo);
-      const lineaFactura : LineaFactura = {
-        Consecutivo: producto.Consecutivo,
-        Nombre: producto.Nombre,
-        Cantidad: producto.Cantidad,
-        CantidadSeleccionada: 1,
-        Precio: producto.Precio,
-        Impuesto: producto.Impuesto,
-        Total: producto.Precio
+    try{
+      const consecutivo : number = Number(value.pop());
+      if(!lineas.find(linea => linea.Consecutivo == consecutivo )){
+        const producto : Producto = await seleccionarProductoAux(consecutivo);
+        if(producto.Cantidad == 0)
+          throw new Error("El producto " + producto.Nombre + " no tiene existencias.");
+        const lineaFactura : LineaFactura = {
+          Consecutivo: producto.Consecutivo,
+          Nombre: producto.Nombre,
+          Cantidad: producto.Cantidad,
+          CantidadSeleccionada: 1,
+          Precio: producto.Precio,
+          Impuesto: producto.Impuesto,
+          Total: producto.Precio
+        }
+        setLineas([...lineas, lineaFactura]);
       }
-      setLineas([...lineas, lineaFactura]);
+      setResultados([]);
     }
-    setResultados([]);
+    catch (err) {
+      setResultados([]);
+      setCargando(false);
+      if (typeof err === "object" && err !== null && "message" in err) {
+        setTituloError("Error al ingresar el producto");
+        setCuerpoError(String((err as any).message));
+      } else {
+        setTituloError("Error al ingresar el producto");
+        setCuerpoError("Error desconocido");
+      }
+      setError(true);
+    }
   };
 
   const eliminarLinea = (consecutivo : Number) => {
@@ -152,6 +182,45 @@ function PantallaFacturacion(){
     setTotal(totalAux);
   }, [lineas]);
 
+  const manejarTextoSoloLetras = (valor: string, setValor: (val: string) => void) => {
+    const soloLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]*$/;
+    if (soloLetras.test(valor)) {
+      setValor(valor);
+    }
+  };
+
+  const crearFactura = async() => {
+    try{
+      setCargando(true)
+      const factura : Factura = {
+        IdFactura: "",
+        NombreCliente: nombre + " " + primerApellido + " " + segundoApellido,
+        DireccionCliente: provincia + " " + canton + " " + distrito + " " + senas, 
+        IdentificacionCliente: cedula,
+        CorreoElectronicoCliente: correoElectronico,
+        Vendedor: "",
+        Fecha: "",
+        SubTotal: 0,
+        Descuento: 0,
+        Total: 0,
+        Lineas: lineas
+      };
+      const idFactura : string = await CrearFacturaAux(factura);
+      navegador("/verFactura/" + idFactura + "/pantallaFacturacion")
+    }
+    catch (err) {
+      setCargando(false);
+      if (typeof err === "object" && err !== null && "message" in err) {
+        setTituloError("Error al crear la factura");
+        setCuerpoError(String((err as any).message));
+      } else {
+        setTituloError("Error al crear la factura");
+        setCuerpoError("Error desconocido");
+      }
+      setError(true);
+    }
+  }
+
   return(
     <div className="contenedorPantallaFacturacion">
       <div className="contenedorTituloBotonVolverMenuInventario">
@@ -165,16 +234,104 @@ function PantallaFacturacion(){
       </div>
       <div className="contenedorCuerpoFacturacion">
         <div className="contenedorInformacionClienteFacturacion">
-          <div className="tituloInformacionCliente" >Información del Cliente</div>
-          <Input id="cedula" placeholder="Cédula del cliente" className="entradaInformacionCliente" />
-          <Input id="correoElectronico" placeholder="Correo Electrónico" className="entradaInformacionCliente" />
-          <Input id="nombre" placeholder="Nombre del cliente" className="entradaInformacionCliente" />
-          <Input id="primerApellido" placeholder="Primer apellido" className="entradaInformacionCliente" />
-          <Input id="segundoApellido" placeholder="Segundo apellido" className="entradaInformacionCliente" />
-          <Input id="provincia" placeholder="Provincia" className="entradaInformacionCliente" />
-          <Input id="canton" placeholder="Canton" className="entradaInformacionCliente" />
-          <Input id="provincia" placeholder="Provincia" className="entradaInformacionCliente" />
-          <Input id="senas" placeholder="Señas exactas" className="entradaInformacionCliente" />
+          <Form className="formularioCliente">
+            <div className="tituloInformacionCliente">Información del Cliente</div>
+
+            <Form.Item
+              className="formularioItemInformacionCliente"
+              rules={[
+                {
+                  pattern: /^[1-7]\d{8}$/,
+                  message: 'Debe ser un número entre 100000000 y 799999999',
+                },
+              ]}
+            >
+              <Input
+                value={cedula}
+                placeholder="Cédula del cliente"
+                className="entradaInformacionCliente"
+                type="number"
+                onChange={(e) => setCedula(e.target.value)}
+              />
+            </Form.Item>
+
+            <Form.Item
+              name={"correo"}
+              className="formularioItemInformacionCliente"
+              rules={[
+                { type: 'email', message: 'Correo electrónico no válido' },
+              ]}
+            >
+              <Input
+                value={correoElectronico}
+                placeholder="Correo Electrónico"
+                className="entradaInformacionCliente"
+                onChange={(e) => setCorreoElectronico(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item className="formularioItemInformacionCliente">
+              <Input
+                value={nombre}
+                placeholder="Nombre del cliente"
+                className="entradaInformacionCliente"
+                onChange={(e) => manejarTextoSoloLetras(e.target.value, setNombre)}
+              />
+            </Form.Item>
+
+            <Form.Item className="formularioItemInformacionCliente">
+              <Input
+                value={primerApellido}
+                placeholder="Primer apellido"
+                className="entradaInformacionCliente"
+                onChange={(e) => manejarTextoSoloLetras(e.target.value, setPrimerApellido)}
+              />
+            </Form.Item>
+
+            <Form.Item className="formularioItemInformacionCliente">
+              <Input
+                value={segundoApellido}
+                placeholder="Segundo apellido"
+                className="entradaInformacionCliente"
+                onChange={(e) => manejarTextoSoloLetras(e.target.value, setSegundoApellido)}
+              />
+            </Form.Item>
+
+            <Form.Item className="formularioItemInformacionCliente">
+              <Input
+                value={provincia}
+                placeholder="Provincia"
+                className="entradaInformacionCliente"
+                onChange={(e) => manejarTextoSoloLetras(e.target.value, setProvincia)}
+              />
+            </Form.Item>
+
+            <Form.Item className="formularioItemInformacionCliente">
+              <Input
+                value={canton}
+                placeholder="Cantón"
+                className="entradaInformacionCliente"
+                onChange={(e) => setCanton(e.target.value)}
+              />
+            </Form.Item>
+
+            <Form.Item className="formularioItemInformacionCliente">
+              <Input
+                value={distrito}
+                placeholder="Distrito"
+                className="entradaInformacionCliente"
+                onChange={(e) => setDistrito(e.target.value)}
+              />
+            </Form.Item>
+
+            <Form.Item className="formularioItemInformacionCliente">
+              <Input
+                value={senas}
+                placeholder="Señas exactas"
+                className="entradaInformacionCliente"
+                onChange={(e) => setSenas(e.target.value)}
+              />
+            </Form.Item>
+          </Form>
         </div>
         <div className="contenedorFacturacion">
           <div className="contenedorEntradaBusquedaProductosFactura" >
@@ -189,12 +346,12 @@ function PantallaFacturacion(){
             />
           </div>
           <div className="contenedorTablaFactura">
-            <Table
+            <Table <LineaFactura>
               columns={encabezados}
               dataSource={lineas}
               pagination={false}
               className="tablaFactura"
-              scroll={{ y: 250}}
+              scroll={{ y: '45vh' }}
               locale={{ emptyText: 'Sin productos en la factura' }}
             />
           </div>
@@ -208,10 +365,19 @@ function PantallaFacturacion(){
           </div>
           <div className="contenedorBotonesFacturacion">
             <Button color="primary" variant="dashed" onClick={limpiarFactura}>Limpiar Factura</Button>
-            <Button type="primary">Facturar</Button>
+            <Button type="primary" onClick={crearFactura}>Facturar</Button>
           </div>
         </div>
       </div>
+      <Spin spinning={cargando} size="large" fullscreen />
+      <Modal
+        title={tituloError}
+        open={error}
+        onOk={() => setError(false)}
+        cancelButtonProps={{ style: { display: "none" } }}
+      >
+        <p>{cuerpoError}</p>
+      </Modal>
     </div>
   );
 }

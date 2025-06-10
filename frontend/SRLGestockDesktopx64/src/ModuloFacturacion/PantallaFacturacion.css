@@ -23,8 +23,12 @@
   font-size:x-large;
 }
 
-.entradaInformacionCliente {
+.formularioItemInformacionCliente{
   width: 80%;
+}
+
+.entradaInformacionCliente {
+  width: 100%;
 }
 
 .contenedorFacturacion {
@@ -65,6 +69,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow-y: hidden;
 }
 
 .tablaFactura {
@@ -128,6 +133,15 @@
 .botonEliminarLinea{
   height: 3vw;
   width: auto;
+}
+
+.formularioCliente{
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media (max-width: 1200px) {
