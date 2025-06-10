@@ -1,5 +1,17 @@
+/**
+ * Clase utilitaria para el envío de correos electrónicos desde el sistema.
+ * Utiliza un servicio externo (Mailtrap) para enviar mensajes.
+ */
 class CorreoElectronico {
 
+  /**
+   * Envía un correo electrónico al destinatario especificado.
+   * Si ocurre un error, lo registra en consola.
+   * @param destino - Correo electrónico del destinatario.
+   * @param asunto - Asunto del correo.
+   * @param contenido - Contenido del mensaje.
+   * @param categoria - Categoría del correo.
+   */
   public static async EnviarCorreoElectronico(destino: string, asunto: string, contenido: string, categoria: string) : Promise<void> {
     try {
       await this.EnviarCorreoElectronicoAux(destino, asunto, contenido, categoria);
@@ -12,6 +24,13 @@ class CorreoElectronico {
     }
   }
 
+  /**
+   * Método auxiliar privado que realiza la petición HTTP para enviar el correo.
+   * @param destino - Correo electrónico del destinatario.
+   * @param asunto - Asunto del correo.
+   * @param contenido - Contenido del mensaje.
+   * @param categoria - Categoría del correo.
+   */
   private static async EnviarCorreoElectronicoAux(destino: string, asunto: string, contenido: string, categoria: string) : Promise<void> {
     const datos : string = JSON.stringify({
       from: {

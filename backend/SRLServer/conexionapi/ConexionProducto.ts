@@ -6,10 +6,21 @@ import GestorProductos from "../controlproductos/GestorProductos.ts";
 import Producto from "../controlproductos/Producto.ts";
 import ProductoLista from "../controlproductos/ProductoLista.ts";
 
-
+/**
+ * Clase encargada de definir y gestionar las rutas de la API relacionadas con productos.
+ * Permite crear, ver, seleccionar, actualizar y eliminar productos,
+ * validando siempre la sesión del usuario y los datos recibidos.
+ */
 export default class ConexionProducto {
+  /** Enrutador de Oak para definir las rutas */
   private Enrutador : Router;
+  /** Gestor de operaciones sobre productos */
   private Gestor : GestorProductos;
+
+  /**
+   * Inicializa la clase y registra todas las rutas de productos.
+   * @param enrutador - Instancia del enrutador de Oak.
+   */
   public constructor(enrutador: Router){
     this.Enrutador = enrutador;
     this.Gestor = new GestorProductos();
@@ -20,6 +31,10 @@ export default class ConexionProducto {
     this.EliminarProducto();
   }
 
+  /**
+   * Ruta POST /CrearProducto
+   * Crea un nuevo producto en el inventario.
+   */
   private CrearProducto() : void {
     this.Enrutador.post("/CrearProducto", async (contexto : Context) => {
       try {
@@ -61,6 +76,10 @@ export default class ConexionProducto {
     });
   };
 
+  /**
+   * Ruta POST /VerProducto
+   * Obtiene una lista de productos filtrados por consecutivo y nombre.
+   */
   private VerProductos() : void {
     this.Enrutador.post("/VerProducto", async (contexto : Context) => {
       try {
@@ -91,6 +110,10 @@ export default class ConexionProducto {
     });
   };
 
+  /**
+   * Ruta POST /SeleccionarProducto
+   * Selecciona un producto específico por su consecutivo.
+   */
   private SeleccionarProducto() : void {
     this.Enrutador.post("/SeleccionarProducto", async (contexto : Context) => {
       try {
@@ -119,6 +142,10 @@ export default class ConexionProducto {
     });
   };
 
+  /**
+   * Ruta POST /ActualizarProducto
+   * Actualiza los datos de un producto existente.
+   */
   private ActualizarProducto(): void {
     this.Enrutador.post("/ActualizarProducto", async (contexto : Context) => {
       try {
@@ -153,6 +180,10 @@ export default class ConexionProducto {
     });
   }
 
+  /**
+   * Ruta POST /EliminarProducto
+   * Elimina un producto del inventario.
+   */
   private EliminarProducto() : void {
     this.Enrutador.post("/EliminarProducto", async (contexto : Context) => {
       try {

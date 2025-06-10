@@ -5,9 +5,21 @@ import {
 import GestorSesionUsuario from "../controlusuario/GestorSesionUsuario.ts";
 import RolUsuarioSQL from "../conexionsql/RolUsuarioSQLInterface.ts";
 
+/**
+ * Clase encargada de definir y gestionar las rutas de la API relacionadas con usuarios.
+ * Permite iniciar/cerrar sesión, crear usuarios, recuperar/cambiar contraseñas,
+ * recuperar información general y consultar roles, interactuando con el gestor de sesiones.
+ */
 export default class ConexionUsuario {
+  /** Enrutador de Oak para definir las rutas */
   private Enrutador : Router;
+  /** Gestor de sesiones y operaciones de usuario */
   private GestorSesionesUsuario : GestorSesionUsuario;
+
+  /**
+   * Inicializa la clase y registra todas las rutas de usuario.
+   * @param enrutador - Instancia del enrutador de Oak.
+   */
   public constructor(enrutador: Router){
     this.Enrutador = enrutador;
     this.GestorSesionesUsuario = new GestorSesionUsuario();
@@ -20,6 +32,10 @@ export default class ConexionUsuario {
     this.TraerRoles();
   }
 
+  /**
+   * Ruta POST /IniciarSesion
+   * Inicia sesión de usuario con correo y contraseña.
+   */
   private IniciarSesion() : void {
     this.Enrutador.post("/IniciarSesion", async (contexto : Context) => {
       try {
@@ -43,6 +59,10 @@ export default class ConexionUsuario {
     });
   };
 
+  /**
+   * Ruta POST /CrearUsuario
+   * Crea un nuevo usuario en el sistema.
+   */
   private CrearUsuario() : void {
     this.Enrutador.post("/CrearUsuario", async (contexto : Context) => {
       try{
@@ -81,6 +101,10 @@ export default class ConexionUsuario {
     });
   }
 
+  /**
+   * Ruta POST /CerrarSesion
+   * Cierra la sesión de usuario correspondiente al ID de sesión.
+   */
   private CerrarSesion() : void {
     this.Enrutador.post("/CerrarSesion", async (contexto : Context) => {
       try {
@@ -103,6 +127,10 @@ export default class ConexionUsuario {
     });
   }
 
+  /**
+   * Ruta POST /RecuperarContrasena
+   * Envía una nueva contraseña al correo electrónico del usuario.
+   */
   private RecuperarContrasena() : void {
     this.Enrutador.post("/RecuperarContrasena", async (contexto : Context) => {
       try {
@@ -125,6 +153,10 @@ export default class ConexionUsuario {
     });
   }
 
+  /**
+   * Ruta POST /RecuperarInformacionGeneralUsuario
+   * Recupera la información general del usuario autenticado.
+   */
   private RecuperarInformacionGeneral() : void {
     this.Enrutador.post("/RecuperarInformacionGeneralUsuario", async (contexto : Context) => {
       try {
@@ -148,6 +180,10 @@ export default class ConexionUsuario {
     });
   }
 
+  /**
+   * Ruta POST /CambiarContrasena
+   * Cambia la contraseña del usuario autenticado.
+   */
   private CambiarContrasena() : void {
     this.Enrutador.post("/CambiarContrasena", async (contexto : Context) => {
       try {
@@ -171,6 +207,10 @@ export default class ConexionUsuario {
     });
   }
 
+  /**
+   * Ruta POST /TraerRoles
+   * Recupera la lista de roles de usuario disponibles en el sistema.
+   */
   private TraerRoles() : void {
     this.Enrutador.post("/TraerRoles", async (contexto : Context) => {
       try {

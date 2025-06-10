@@ -7,10 +7,20 @@ import GestorFactura from "../controlFacturacion/GestorFactura.ts";
 import FacturaLista from "../controlFacturacion/FacturaLista.ts";
 import LineaFactura from "../controlFacturacion/LineaFactura.ts";
 
-
+/**
+ * Clase encargada de definir y gestionar las rutas de la API relacionadas con facturación.
+ * Permite seleccionar, crear y buscar facturas, validando la sesión del usuario y los datos recibidos.
+ */
 export default class ConexionFactura {
+  /** Enrutador de Oak para definir las rutas */
   private Enrutador : Router;
+  /** Gestor de operaciones sobre facturación */
   private Gestor : GestorFactura;
+
+  /**
+   * Inicializa la clase y registra todas las rutas de facturación.
+   * @param enrutador - Instancia del enrutador de Oak.
+   */
   public constructor(enrutador: Router){
     this.Enrutador = enrutador;
     this.Gestor = new GestorFactura();
@@ -19,6 +29,10 @@ export default class ConexionFactura {
     this.BuscarFacturas();
   }
 
+  /**
+   * Ruta POST /SeleccionarFactura
+   * Selecciona una factura específica por su ID.
+   */
   private SeleccionarFactura() : void {
     this.Enrutador.post("/SeleccionarFactura", async (contexto : Context) => {
       try {
@@ -44,6 +58,10 @@ export default class ConexionFactura {
     });
   };
 
+  /**
+   * Ruta POST /CrearFactura
+   * Crea una nueva factura en el sistema.
+   */
   private CrearFactura() : void {
     this.Enrutador.post("/CrearFactura", async (contexto : Context) => {
       try {
@@ -76,10 +94,20 @@ export default class ConexionFactura {
     });
   };
 
+  /**
+   * Parsea un arreglo de líneas de factura para asegurar el tipo de datos correcto.
+   * @param data - Arreglo de líneas de factura.
+   * @returns Arreglo de líneas de factura con los tipos correctos.
+   */
   private parseLineasFactura(data: LineaFactura[]): LineaFactura[] {
     return data.map(this.parseLineaFactura);
   }
   
+  /**
+   * Parsea una línea de factura para asegurar el tipo de datos correcto.
+   * @param linea - Línea de factura a procesar.
+   * @returns Línea de factura con los tipos correctos.
+   */
   private parseLineaFactura(linea: LineaFactura): LineaFactura {
     return {
       Consecutivo: Number(linea.Consecutivo),
@@ -91,6 +119,10 @@ export default class ConexionFactura {
     };
   }
 
+  /**
+   * Ruta POST /BuscarFactura
+   * Busca facturas por su ID.
+   */
   private BuscarFacturas() : void {
     this.Enrutador.post("/BuscarFactura", async (contexto : Context) => {
       try {

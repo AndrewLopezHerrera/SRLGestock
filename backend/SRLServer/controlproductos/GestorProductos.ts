@@ -3,13 +3,29 @@ import ConexionSQLInventario from "../conexionsql/ConexionSQLInventario.ts";
 import GestorSesionUsuario from "../controlusuario/GestorSesionUsuario.ts";
 import ProductoLista from "./ProductoLista.ts";
 
+/**
+ * Clase encargada de gestionar las operaciones sobre productos.
+ * Permite agregar, ver, seleccionar, modificar y eliminar productos,
+ * validando siempre que la sesión del usuario sea válida.
+ */
 class GestorProductos{
+  /** Conexión a la base de datos de inventario */
   private ConexionSQL : ConexionSQLInventario;
 
+  /**
+   * Inicializa el gestor de productos y la conexión SQL.
+   */
   constructor(){
     this.ConexionSQL = new ConexionSQLInventario();
   }
 
+  /**
+   * Agrega un nuevo producto al inventario.
+   * @param producto - Objeto Producto con los datos a registrar.
+   * @param sesion - ID de la sesión del usuario.
+   * @returns True si el producto fue agregado correctamente.
+   * @throws Error si la sesión no existe o la operación falla.
+   */
   public async AgregarProducto(producto : Producto, sesion: string) : Promise<boolean> {
     if(!GestorSesionUsuario.VerificarEstadoSesion(sesion))
       throw new Error("La sesión de usuario no existe");
@@ -19,6 +35,14 @@ class GestorProductos{
     return true;
   }
 
+  /**
+   * Obtiene una lista de productos filtrados por consecutivo y nombre.
+   * @param consecutivo - Consecutivo del producto (puede ser vacío).
+   * @param nombre - Nombre del producto (puede ser vacío).
+   * @param sesion - ID de la sesión del usuario.
+   * @returns Lista de productos encontrados.
+   * @throws Error si la sesión no existe.
+   */
   public async VerProductos(consecutivo: string, nombre: string, sesion: string): Promise<ProductoLista[]> {
     if(!GestorSesionUsuario.VerificarEstadoSesion(sesion))
       throw new Error("La sesión de usuario no existe");
@@ -26,6 +50,13 @@ class GestorProductos{
     return respuesta;
   }
 
+  /**
+   * Selecciona un producto específico por su consecutivo.
+   * @param consecutivo - Consecutivo único del producto.
+   * @param sesion - ID de la sesión del usuario.
+   * @returns Objeto Producto con los datos encontrados.
+   * @throws Error si la sesión no existe.
+   */
   public async SeleccionarProducto(consecutivo: number, sesion: string): Promise<Producto>{
     if(!GestorSesionUsuario.VerificarEstadoSesion(sesion))
       throw new Error("La sesión de usuario no existe");
@@ -33,6 +64,13 @@ class GestorProductos{
     return respuesta;
   }
   
+  /**
+   * Modifica los datos de un producto existente.
+   * @param producto - Objeto Producto con los datos actualizados.
+   * @param sesion - ID de la sesión del usuario.
+   * @returns True si la actualización fue exitosa.
+   * @throws Error si la sesión no existe o la actualización falla.
+   */
   public async ModificarProducto(producto: Producto, sesion: string): Promise<boolean> {
     if(!GestorSesionUsuario.VerificarEstadoSesion(sesion))
       throw new Error("La sesión de usuario no existe");
@@ -42,6 +80,13 @@ class GestorProductos{
     return true;
   }
   
+  /**
+   * Elimina un producto del inventario.
+   * @param consecutivoProducto - Consecutivo único del producto a eliminar.
+   * @param sesion - ID de la sesión del usuario.
+   * @returns True si el producto fue eliminado correctamente.
+   * @throws Error si la sesión no existe o la eliminación falla.
+   */
   public async EliminarProducto(consecutivoProducto: number, sesion: string): Promise<boolean> {
     if(!GestorSesionUsuario.VerificarEstadoSesion(sesion))
       throw new Error("La sesión de usuario no existe");
