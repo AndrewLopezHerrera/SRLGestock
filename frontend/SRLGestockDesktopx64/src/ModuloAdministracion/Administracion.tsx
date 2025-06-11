@@ -3,6 +3,7 @@ import "./Administracion.css"
 import { Button } from "antd";
 import CreacionUsuario from "../ModuloGestionUsuario/CrearUsuarios";
 import { useState } from "react";
+import ActualizarEmpresa from "./ActualizarEmpresa";
 
 function Admistracion(){
   const navegador = useNavigate();
@@ -16,7 +17,9 @@ function Admistracion(){
   const cambiarPantalla = (pantalla : string) => {
     if(pantalla === 'CrearUsuario'){
       setPantallaActual(<CreacionUsuario/>);
-      return;
+    }
+    if(pantalla === 'ActualizarEmpresa'){
+      setPantallaActual(<ActualizarEmpresa/>);
     }
   }
 
@@ -27,13 +30,14 @@ function Admistracion(){
           <Button onClick={irMenuPrincipal} className="botonVolver">Volver</Button>
         </div>
         <div className="contenedorTituloAdministracion">
-          <h1 className="tituloAdministracion">Administracion</h1>
+          <h1 className="tituloAdministracion">Administración</h1>
         </div>
         <div className="contenedorBotonVolverAdministracion" />
       </div>
       <div className="contenedorAccionesAdministracion">
         <div className="contenedorBotonesAccionesAdministracion">
           <Button onClick={() => cambiarPantalla("CrearUsuario")} className="botonAccionAdministracion">Crear Usuarios</Button>
+          <Button onClick={() => cambiarPantalla("ActualizarEmpresa")} className="botonAccionAdministracion">Actualizar Empresa</Button>
         </div>
         <div className="contenedorPantallaAccionAdministracion">
           {pantallaActual}

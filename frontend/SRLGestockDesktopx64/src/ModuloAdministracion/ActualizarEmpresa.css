@@ -1,0 +1,21 @@
+.contenedorPrincipalActualizarEmpresa{
+  max-height: 100%;
+  max-width: 100%;
+  overflow-y: auto;
+}
+
+.tituloActualizarEmpresa{
+  color: #16B2EC;
+  font-size: 2vw;
+  margin-top: 2vh;
+  margin-bottom: 2vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.contenedorFormularioActualizarEmpresa{
+  width: 100%;
+  height: auto;
+}
