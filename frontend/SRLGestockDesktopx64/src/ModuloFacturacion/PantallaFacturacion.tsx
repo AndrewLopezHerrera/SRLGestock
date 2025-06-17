@@ -191,6 +191,9 @@ function PantallaFacturacion(){
 
   const crearFactura = async() => {
     try{
+      if(lineas.length === 0){
+        throw new Error("Debe agregar al menos un producto a la factura.");
+      }
       setCargando(true)
       const factura : Factura = {
         IdFactura: "",
