@@ -37,6 +37,7 @@ function ContrasenaOlvidada(){
       setEsVisible(true);
     }
     catch (err) {
+      setCargando(false);
       setTituloModalError("Error al recuperar contraseña");
       if (typeof err === "object" && err !== null && "message" in err) {
         setCuerpoModalError(String((err as any).message));
